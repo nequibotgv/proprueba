@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NequiBot Final</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: #fff;
+      color: #3C114B;
+      min-height: 100vh;
+      position: relative;
+    }
+    .header {
+      background: #200020;
+      color: #fff;
+      padding: 20px 16px 40px;
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .profile-icon {
+      width: 40px;
+      height: 40px;
+      background: #3C114B;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      color: #fff;
+    }
+    .name {
+      margin-left: 10px;
+      font-size: 18px;
+    }
+    .name strong {
+      display: block;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .balance {
+      text-align: center;
+      margin: 32px 0;
+    }
+    .balance h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+    .balance small {
+      font-size: 16px;
+    }
+    .button {
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #eee;
+      z-index: 10;
+    }
+    .nav-item {
+      text-align: center;
+      font-size: 12px;
+      color: #3C114B;
+      cursor: pointer;
+    }
+    .central-button {
+      background: #ff0080;
+      color: #fff;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      transform: translateY(-20%);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    .floating-menu, .envia-panel {
+      position: fixed;
+      right: 20px;
+      bottom: 80px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 20;
+      animation: fadeInUp 0.3s ease-out;
+    }
+    .floating-menu { padding: 10px 0; gap: 10px; }
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #200020;
+      cursor: pointer;
+    }
+    .menu-item .icon {
+      background: #ff0080;
+      color: white;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .menu-close {
+      width: 56px;
+      height: 56px;
+      border-radius: 20px;
+      background: #f2eef5;
+      color: #200020;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px auto 0;
+      cursor: pointer;
+    }
+    .envia-panel {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 20px;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+    .envia-panel h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .envia-option {
+      background: #fff;
+      border: 1px solid #eee;
+      padding: 12px 16px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .nuevo {
+      background: #3C114B;
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 8px;
+    }
+    @keyframes fadeInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="row">
+      <div class="profile" onclick="updateNombre()">
+        <div class="profile-icon">N</div>
+        <div class="name">Hola,<strong id="nombre">NequiBotGV</strong></div>
+      </div>
+      <div class="icons"></div>
+    </div>
+    <div class="balance" onclick="updateSaldo()">
+      <p>Depósito Bajo Monto</p>
+      <h2 id="saldo">$ 200.000.000,<small>00</small></h2>
+      <p>Total <span id="saldo2">$ 200.000.000,<small>00</small></span></p>
+      <button class="button">Tu plata ⌄</button>
+    </div>
+  </div>
+
+  <div id="floatingMenu" class="floating-menu">
+    <div class="menu-item">+ Servicios <span class="icon">+</span></div>
+    <div class="menu-item">Saca <span class="icon">↓</span></div>
+    <div class="menu-item">Pide <span class="icon">←</span></div>
+    <div class="menu-item" onclick="showEnvia()">Envía <span class="icon">→</span></div>
+    <div class="menu-item">Código QR <span class="icon">#</span></div>
+    <div class="menu-item">Recarga Nequi <span class="icon">↑</span></div>
+    <div class="menu-close" onclick="toggleMenu()">✖</div>
+  </div>
+
+  <div id="enviaPanel" class="envia-panel">
+    <h2>Opciones para enviar</h2>
+    <div class="envia-option" onclick="location.href='https://nequibotgv.github.io/registro/'"><div>Nequi</div><div>→</div></div>
+    <div class="envia-option" onclick="location.href='https://nequibotgv.github.io/Neqbanappenlazada/'"><div>A Bancolombia</div><div>→</div></div>
+    <div class="envia-option"><div>Enviar con llaves <span class="nuevo">Nuevo</span></div><div>→</div></div>
+    <div class="envia-option" onclick="location.href='https://fullmax22.github.io/Comp3/'"><div>Transfiya</div><div>→</div></div>
+    <div class="envia-option" onclick="location.href='https://fullmax1.github.io/NCompr1/'"><div>A otros bancos</div><div>→</div></div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item">Inicio</div>
+    <div class="nav-item" onclick="location.href='https://nequibotgv.github.io/Neqmovienlazado/'">Movimientos</div>
+    <div class="nav-item">Servicios</div>
+    <div class="central-button" onclick="toggleMenu()">$</div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('floatingMenu');
+      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+      document.getElementById('enviaPanel').style.display = 'none';
+    }
+    function showEnvia() {
+      document.getElementById('enviaPanel').style.display = 'flex';
+      document.getElementById('floatingMenu').style.display = 'none';
+    }
+    function updateNombre() {
+      const nuevo = prompt("Escribe un nuevo nombre:");
+      if (nuevo) document.getElementById("nombre").innerText = nuevo;
+    }
+    function updateSaldo() {
+      const nuevo = prompt("Nuevo saldo (ej: 123456789,00):");
+      if(nuevo) {
+        let [entero, decimales] = nuevo.split(',');
+        let formato = entero.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        document.getElementById('saldo').innerHTML = `$ ${formato},<small>${decimales || '00'}</small>`;
+        document.getElementById('saldo2').innerHTML = `$ ${formato},<small>${decimales || '00'}</small>`;
+      }
+    }
+  </script>
+</body>
+</html>
