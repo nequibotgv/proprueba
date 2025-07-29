@@ -1,326 +1,367 @@
+<!-- Coloca este código completo en tu archivo HTML -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NequiBot Final</title>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>NequiBotGV - Generador</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --morado: #3C114B;
-      --fondo-header: #200020;
-      --rosado: #ff0080;
-      --margen: 16px;
-      --radio: 20px;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
     body {
+      margin: 0;
+      padding: 0;
+      background: #000;
       font-family: 'Manrope', sans-serif;
-      background: #fff;
-      color: var(--morado);
-      min-height: 100vh;
-      position: relative;
-    }
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .header {
-      background: var(--fondo-header);
-      color: #fff;
-      padding: 6vw 5vw 10vw 5vw;
-      border-bottom-left-radius: 10vw;
-      border-bottom-right-radius: 10vw;
-    }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .profile {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-    }
-    .profile-icon {
-      width: 10vw;
-      min-width: 40px;
-      height: 10vw;
-      min-height: 40px;
-      max-width: 50px;
-      max-height: 50px;
-      background: var(--morado);
-      border-radius: 2vw;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 1.1em;
-      color: #fff;
+      min-height: 100vh;
+      flex-direction: column;
     }
-    .name {
-      margin-left: 3vw;
-      font-size: 1.1em;
-    }
-    .name strong {
-      display: block;
-      font-size: 1.3em;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-    .balance {
+    .formulario {
+      background: #111;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 128, 255, 0.4);
+      width: 90%;
+      max-width: 400px;
       text-align: center;
-      margin: 7vw 0 4vw 0;
     }
-    .balance h2 {
-      font-size: 2.2em;
+    .titulo {
+      font-size: 32px;
       font-weight: 700;
-      margin: 8px 0;
-      word-break: break-all;
+      background: linear-gradient(90deg, #0044cc, #00bfff);
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      margin-bottom: 20px;
+      text-shadow: 0px 0px 15px rgba(0, 191, 255, 0.8);
     }
-    .balance small {
-      font-size: .9em;
-    }
-    .button {
-      background: transparent;
-      border: 1px solid #fff;
+    .input-campo {
+      width: 90%;
+      padding: 14px;
+      margin: 12px 0;
+      border: 1px solid #444;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #222;
       color: #fff;
-      padding: 2vw 7vw;
-      border-radius: 2vw;
-      font-size: 1em;
-      cursor: pointer;
-      margin-top: 3vw;
+      font-family: 'Manrope', sans-serif;
     }
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      width: 100vw;
+    .boton {
+      margin-top: 10px;
+      padding: 14px;
+      width: 90%;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      color: #fff;
+    }
+    .boton:hover { opacity: 0.9; }
+    .boton-whatsapp { background: linear-gradient(90deg, #00c853, #00e676); }
+    .boton-clave { background: linear-gradient(90deg, #cc0000, #ff1744); }
+    .boton-cambiar { background: linear-gradient(90deg, #6a1b9a, #8e24aa); }
+    .boton-descargar { background: linear-gradient(90deg, #1976d2, #2196f3); }
+
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 390px;
+      margin: 20px auto;
       background: #fff;
-      display: flex;
-      justify-content: space-around;
-      padding: 2vw 0 1vw 0;
-      border-top: 1px solid #eee;
-      z-index: 10;
-      max-width: 480px;
+      overflow: visible;
+      display: none;
+      transform-origin: top left;
+      transform: scale(1);
+    }
+
+    .container img {
+      width: 100%;
+      display: block;
+    }
+
+    .input-overlay {
+      position: absolute;
+      background: transparent;
+      border: none;
+      font-size: 14px;
+      color: #3C114B;
+      font-weight: 500;
+      text-align: left;
+      font-family: 'Manrope', sans-serif;
+      outline: none;
+      pointer-events: none;
+      line-height: 1.4;
+      padding-bottom: 3px;
+      padding-top: 1px;
+      height: auto;
+    }
+
+    /* Campo nombre ajustado para que no corte letras como "g", "y", "p" */
+    #nombre {
+      top: calc(412.26px * var(--escala));
+      left: calc((17px + 20px) * var(--escala));
+      line-height: 1.6;
+      padding-bottom: 5px;
+    }
+    #valor {
+      top: calc((449.48px + 12px) * var(--escala));
+      left: calc((17px + 20px) * var(--escala));
+    }
+    #nequi {
+      top: calc((449.48px + 57px) * var(--escala));
+      left: calc((17px + 20px) * var(--escala));
+    }
+    #fecha {
+      top: calc((555px) * var(--escala));
+      left: calc((39px) * var(--escala));
+      white-space: normal;
+    }
+    #referencia {
+      top: calc((540.26px + 58px + 2px) * var(--escala));
+      left: calc((17px + 20px) * var(--escala));
+    }
+
+    #verPantallaCompleta {
+      display: none;
+      position: fixed;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-    }
-    .nav-item {
-      text-align: center;
-      font-size: 3.5vw;
-      color: var(--morado);
-      cursor: pointer;
-      min-width: 60px;
-    }
-    .central-button {
-      background: var(--rosado);
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #1e88e5;
       color: #fff;
-      width: 14vw;
-      height: 14vw;
-      max-width: 56px;
-      max-height: 56px;
-      min-width: 44px;
-      min-height: 44px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 2em;
-      transform: translateY(-20%);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      cursor: pointer;
       border: none;
+      border-radius: 12px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: bold;
+      z-index: 9999;
     }
-    .floating-menu, .envia-panel {
+
+    .mensaje-carga {
       position: fixed;
-      right: 5vw;
-      bottom: 16vw;
-      background: #fff;
-      border-radius: var(--radio);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-      display: none;
-      flex-direction: column;
-      z-index: 20;
-      animation: fadeInUp 0.3s ease-out;
-      min-width: 220px;
-      max-width: 94vw;
-    }
-    .floating-menu { padding: 10px 0; gap: 10px; }
-    .menu-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 20px;
-      font-size: 1em;
-      color: var(--fondo-header);
-      cursor: pointer;
-    }
-    .menu-item .icon {
-      background: var(--rosado);
-      color: white;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1em;
-    }
-    .menu-close {
-      width: 56px;
-      height: 56px;
-      border-radius: var(--radio);
-      background: #f2eef5;
-      color: var(--fondo-header);
-      font-size: 1.6em;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 10px auto 0;
-      cursor: pointer;
-    }
-    .envia-panel {
+      top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 5vw 4vw 12vw 4vw;
-      border-top-left-radius: var(--radio);
-      border-top-right-radius: var(--radio);
-      max-width: 480px;
-      margin: 0 auto;
-    }
-    .envia-panel h2 {
-      font-size: 1.2em;
-      margin-bottom: 6vw;
-    }
-    .envia-option {
-      background: #fff;
-      border: 1px solid #eee;
-      padding: 4vw 2vw;
-      border-radius: 10px;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      margin-bottom: 3vw;
-      cursor: pointer;
-      font-size: 1em;
-    }
-    .nuevo {
-      background: var(--morado);
+      font-size: 24px;
       color: #fff;
-      font-size: 0.7em;
-      padding: 2px 6px;
-      border-radius: 10px;
-      margin-left: 8px;
+      font-family: 'Manrope', sans-serif;
+      z-index: 9999;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s, opacity 0.5s;
     }
-    @keyframes fadeInUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
-    }
-    /* MEDIA QUERIES */
-    @media (max-width: 600px) {
-      .container { max-width: 100vw; }
-      .header {
-        border-bottom-left-radius: 10vw;
-        border-bottom-right-radius: 10vw;
-        padding: 8vw 4vw 14vw 4vw;
-      }
-      .profile-icon {
-        min-width: 36px;
-        min-height: 36px;
-        font-size: 1em;
-      }
-      .balance h2 { font-size: 2em; }
-      .bottom-nav { font-size: 1em; }
-    }
-    @media (max-width: 380px) {
-      .header, .envia-panel, .floating-menu { padding-left: 2vw; padding-right: 2vw; }
-      .balance h2 { font-size: 1.3em; }
-      .button { font-size: .95em; }
-      .central-button { font-size: 1.2em; }
-      .envia-option { font-size: .95em; }
-      .menu-item { font-size: .95em; }
+
+    .mensaje-carga.mostrar {
+      visibility: visible;
+      opacity: 1;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="row">
-        <div class="profile" onclick="updateNombre()">
-          <div class="profile-icon">N</div>
-          <div class="name">Hola,<strong id="nombre">NequiBotGV</strong></div>
-        </div>
-        <div class="icons"></div>
-      </div>
-      <div class="balance" onclick="updateSaldo()">
-        <p>Depósito Bajo Monto</p>
-        <h2 id="saldo">$ 200.000.000,<small>00</small></h2>
-        <p>Total <span id="saldo2">$ 200.000.000,<small>00</small></span></p>
-        <button class="button">Tu plata ⌄</button>
-      </div>
-    </div>
-    <div id="floatingMenu" class="floating-menu">
-      <div class="menu-item">+ Servicios <span class="icon">+</span></div>
-      <div class="menu-item">Saca <span class="icon">↓</span></div>
-      <div class="menu-item">Pide <span class="icon">←</span></div>
-      <div class="menu-item" onclick="showEnvia()">Envía <span class="icon">→</span></div>
-      <div class="menu-item">Código QR <span class="icon">#</span></div>
-      <div class="menu-item">Recarga Nequi <span class="icon">↑</span></div>
-      <div class="menu-close" onclick="toggleMenu()">✖</div>
-    </div>
-    <div id="enviaPanel" class="envia-panel">
-      <h2>Opciones para enviar</h2>
-      <div class="envia-option" onclick="location.href='https://nequibotgv.github.io/registro/'"><div>Nequi</div><div>→</div></div>
-      <div class="envia-option" onclick="location.href='https://nequibotgv.github.io/Neqbanappenlazada/'"><div>A Bancolombia</div><div>→</div></div>
-      <div class="envia-option"><div>Enviar con llaves <span class="nuevo">Nuevo</span></div><div>→</div></div>
-      <div class="envia-option" onclick="location.href='https://fullmax22.github.io/Comp3/'"><div>Transfiya</div><div>→</div></div>
-      <div class="envia-option" onclick="location.href='https://fullmax1.github.io/NCompr1/'"><div>A otros bancos</div><div>→</div></div>
-    </div>
-    <div class="bottom-nav">
-      <div class="nav-item">Inicio</div>
-      <div class="nav-item" onclick="location.href='https://nequibotgv.github.io/Neqmovienlazado/'">Movimientos</div>
-      <div class="nav-item">Servicios</div>
-      <div class="central-button" onclick="toggleMenu()">$</div>
+
+<!-- FORMULARIO -->
+<div class="formulario" id="pantalla">
+  <div class="titulo">NequiBotGV</div>
+  <button id="whatsapp" class="boton boton-whatsapp">¿No tienes clave? Contáctanos</button>
+  <button id="clave-ingreso" class="boton boton-clave">Ingresar Clave</button>
+  <button id="cambiar-clave-boton" class="boton boton-cambiar">Cambiar Clave</button>
+  <div id="contenido-oculto" style="display: none;">
+    <input type="text" id="input-nombre" class="input-campo" placeholder="Nombre del destinatario">
+    <input type="text" id="input-valor" class="input-campo" placeholder="Valor en $">
+    <input type="text" id="input-nequi" class="input-campo" placeholder="Número Nequi">
+    <select id="formato" class="input-campo">
+      <option value="png">Formato: PNG</option>
+      <option value="jpg">Formato: JPG</option>
+    </select>
+    <button id="generar" class="boton boton-descargar">Generar Comprobante</button>
+    <div id="admin-panel" style="display: none;">
+      <input type="text" id="nueva-clave" class="input-campo" placeholder="Nueva clave de acceso">
+      <button id="guardar-nueva-clave" class="boton">Guardar Nueva Clave</button>
     </div>
   </div>
-  <script>
-    function toggleMenu() {
-      const menu = document.getElementById('floatingMenu');
-      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
-      document.getElementById('enviaPanel').style.display = 'none';
+</div>
+
+<!-- COMPROBANTE -->
+<div class="container" id="captura">
+  <img src="comprobante_base.png" alt="Fondo" id="imagen-fondo">
+  <input type="text" id="nombre" class="input-overlay" readonly>
+  <input type="text" id="valor" class="input-overlay" readonly>
+  <input type="text" id="nequi" class="input-overlay" readonly>
+  <div id="fecha" class="input-overlay"></div>
+  <input type="text" id="referencia" class="input-overlay" readonly>
+</div>
+
+<button id="verPantallaCompleta">Ver en Pantalla Completa</button>
+
+<!-- Mensaje de carga -->
+<div class="mensaje-carga" id="mensaje-carga">
+  <pre>
+    Cargando comprobante...
+    Espere 5 segundos.
+  </pre>
+</div>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+let claveAcceso = "32097221381";
+const claveAdmin = "1395";
+
+document.getElementById('whatsapp').addEventListener('click', () => {
+  window.open('https://wa.me/573178793834?text=Hola%2C%20me%20gustar%C3%ADa%20obtener%20la%20clave%20de%20NequiBotGV.', '_blank');
+});
+
+document.getElementById('clave-ingreso').addEventListener('click', () => {
+  const clave = prompt("Ingrese la clave de acceso:");
+  if (clave === claveAdmin) {
+    document.getElementById('admin-panel').style.display = 'block';
+    mostrarFormulario();
+  } else if (clave === claveAcceso) {
+    mostrarFormulario();
+  } else {
+    alert("Clave incorrecta. Acceso denegado.");
+  }
+});
+
+document.getElementById('cambiar-clave-boton').addEventListener('click', () => {
+  const clave = prompt("Ingrese la clave de administrador:");
+  if (clave === claveAdmin) {
+    document.getElementById('admin-panel').style.display = 'block';
+    mostrarFormulario();
+  } else {
+    alert("Clave de administrador incorrecta.");
+  }
+});
+
+function mostrarFormulario() {
+  document.getElementById('contenido-oculto').style.display = 'block';
+  document.getElementById('whatsapp').style.display = 'none';
+  document.getElementById('clave-ingreso').style.display = 'none';
+  document.getElementById('cambiar-clave-boton').style.display = 'none';
+}
+
+document.getElementById('guardar-nueva-clave').addEventListener('click', () => {
+  const nueva = document.getElementById('nueva-clave').value.trim();
+  if (nueva) {
+    claveAcceso = nueva;
+    alert("Clave de acceso actualizada exitosamente.");
+    document.getElementById('nueva-clave').value = "";
+  }
+});
+
+document.getElementById('generar').addEventListener('click', () => {
+  if (!validarEntradas()) return;
+  const container = document.getElementById('captura');
+  const img = document.querySelector('#captura img');
+  const escala = Math.min(window.innerWidth / 390, 1);
+  container.style.setProperty('--escala', escala);
+  document.getElementById('pantalla').style.display = 'none';
+  container.style.display = 'block';
+  document.getElementById('nombre').value = document.getElementById('input-nombre').value;
+  document.getElementById('valor').value = formatValor(document.getElementById('input-valor').value);
+  document.getElementById('nequi').value = document.getElementById('input-nequi').value;
+  generarFecha();
+  generarReferencia();
+  const formato = document.getElementById('formato').value;
+
+  if (!img.complete || !img.naturalWidth) {
+    alert("La imagen de fondo no se ha cargado completamente. Inténtalo nuevamente.");
+    return;
+  }
+
+  document.getElementById('verPantallaCompleta').style.display = 'block';
+
+  setTimeout(() => {
+    descargarComprobante(formato);
+  }, 5200);
+});
+
+document.getElementById('verPantallaCompleta').addEventListener('click', () => {
+  const contenedor = document.getElementById('captura');
+  const btn = document.getElementById('verPantallaCompleta');
+  const mensajeCarga = document.getElementById('mensaje-carga');
+  if (!document.fullscreenElement) {
+    contenedor.requestFullscreen?.();
+    mensajeCarga.classList.add('mostrar');
+    setTimeout(() => mensajeCarga.classList.remove('mostrar'), 5000);
+    btn.textContent = "Salir de Pantalla Completa";
+  } else {
+    document.exitFullscreen?.();
+    btn.textContent = "Ver en Pantalla Completa";
+    mensajeCarga.classList.remove('mostrar');
+  }
+});
+
+function validarEntradas() {
+  const nombre = document.getElementById('input-nombre').value.trim();
+  const valor = document.getElementById('input-valor').value.trim();
+  const nequi = document.getElementById('input-nequi').value.trim();
+  if (!nombre || !valor || !nequi) {
+    alert("Todos los campos son obligatorios.");
+    return false;
+  }
+  if (isNaN(valor.replace(/\D/g, ''))) {
+    alert("El valor debe ser un número válido.");
+    return false;
+  }
+  if (nequi.length < 10) {
+    alert("El número Nequi debe tener al menos 10 dígitos.");
+    return false;
+  }
+  return true;
+}
+
+function generarFecha() {
+  const fecha = new Date();
+  const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  const dia = fecha.getDate().toString().padStart(2, '0');
+  const mes = meses[fecha.getMonth()];
+  const anio = fecha.getFullYear();
+  let h = fecha.getHours(), m = fecha.getMinutes().toString().padStart(2, '0'),
+      ampm = h >= 12 ? 'p. m.' : 'a. m.';
+  h = h % 12 || 12;
+  document.getElementById('fecha').innerHTML = `${dia} de ${mes} de ${anio} a las ${h}:${m} ${ampm}`;
+}
+
+function generarReferencia() {
+  document.getElementById('referencia').value = 'M' + Math.floor(1e7 + Math.random() * 9e7);
+}
+
+function formatValor(valor) {
+  valor = valor.replace(/\D/g, '');
+  if (!valor) return "$ 0,00";
+  return `$ ${valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.')},00`;
+}
+
+function descargarComprobante(formato) {
+  html2canvas(document.getElementById('captura'), {
+    scale: 6,
+    useCORS: true
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL(`image/${formato}`);
+    link.download = `comprobante.${formato}`;
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.open(link.href, '_blank');
+    } else {
+      link.click();
     }
-    function showEnvia() {
-      document.getElementById('enviaPanel').style.display = 'flex';
-      document.getElementById('floatingMenu').style.display = 'none';
-    }
-    function updateNombre() {
-      const nuevo = prompt("Escribe un nuevo nombre:");
-      if (nuevo) document.getElementById("nombre").innerText = nuevo;
-    }
-    function updateSaldo() {
-      const nuevo = prompt("Nuevo saldo (ej: 123456789,00):");
-      if(nuevo) {
-        let [entero, decimales] = nuevo.split(',');
-        let formato = entero.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        document.getElementById('saldo').innerHTML = `$ ${formato},<small>${decimales || '00'}</small>`;
-        document.getElementById('saldo2').innerHTML = `$ ${formato},<small>${decimales || '00'}</small>`;
-      }
-    }
-    // Cierra paneles al tocar fuera en móvil
-    document.addEventListener('click', function(e){
-      const menu = document.getElementById('floatingMenu');
-      const envia = document.getElementById('enviaPanel');
-      if (menu.style.display === 'flex' && !menu.contains(e.target) && !e.target.classList.contains('central-button')) {
-        menu.style.display = 'none';
-      }
-      if (envia.style.display === 'flex' && !envia.contains(e.target) && !e.target.classList.contains('menu-item')) {
-        envia.style.display = 'none';
-      }
-    });
-    // Para evitar scroll horizontal en móviles
-    document.body.style.overflowX = 'hidden';
-  </script>
+  }).catch(err => {
+    console.error("Error al generar imagen:", err);
+    alert("Ocurrió un error al generar el comprobante.");
+  });
+}
+</script>
 </body>
 </html>
