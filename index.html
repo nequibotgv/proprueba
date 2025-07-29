@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Comprobante Hola NequiBotGV</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- html2canvas para capturar -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
@@ -19,7 +18,7 @@
     }
     .comprobante-container {
       position: relative;
-      width: 350px;   /* Cambia a 100% para responsivo */
+      width: 350px;
       max-width: 97vw;
       margin: 30px auto;
     }
@@ -31,7 +30,7 @@
     }
     .texto-saludo {
       position: absolute;
-      top: 42%;     /* Ajusta para tu diseño */
+      top: 42%;
       left: 0;
       width: 100%;
       text-align: center;
@@ -42,9 +41,14 @@
       letter-spacing: 1px;
       pointer-events: none;
     }
-    .boton-descargar {
-      display: block;
-      margin: 30px auto 0 auto;
+    .botones {
+      display: flex;
+      gap: 14px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .boton {
       padding: 14px 34px;
       font-size: 18px;
       color: #fff;
@@ -56,19 +60,22 @@
       font-family: inherit;
       font-weight: 700;
       transition: background 0.2s;
+      margin-bottom: 10px;
     }
-    .boton-descargar:active {
+    .boton:active {
       background: #661199;
     }
   </style>
 </head>
 <body>
   <div class="comprobante-container" id="comprobante">
-    <img src="comprobante_base.png" alt="Comprobante" class="comprobante-img">
+    <img src="comprobante_base (14).png" alt="Comprobante" class="comprobante-img">
     <div class="texto-saludo">Hola</div>
   </div>
-  <button class="boton-descargar" onclick="descargarComprobante()">Descargar</button>
-
+  <div class="botones">
+    <button class="boton" onclick="descargarComprobante()">Descargar</button>
+    <button class="boton" onclick="compartirComprobante()">Compartir</button>
+  </div>
   <script>
     function descargarComprobante() {
       const comprobante = document.getElementById("comprobante");
@@ -83,6 +90,32 @@
         link.click();
         document.body.removeChild(link);
         alert("Comprobante guardado en Descargas o Galería.");
+      });
+    }
+
+    async function compartirComprobante() {
+      const comprobante = document.getElementById("comprobante");
+      html2canvas(comprobante, {
+        useCORS: true,
+        scale: 4 // Máxima calidad para compartir
+      }).then(async (canvas) => {
+        canvas.toBlob(async function(blob) {
+          const file = new File([blob], "comprobante-hola.png", { type: "image/png" });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                title: "Comprobante NequiBotGV",
+                text: "Aquí tienes tu comprobante generado en HD.",
+                files: [file],
+              });
+            } catch (err) {
+              alert("Compartir cancelado o fallido.");
+            }
+          } else {
+            // Si no soporta compartir archivos, muestra solo la imagen o descarga
+            alert("La función de compartir directo no está disponible en tu dispositivo. Descarga la imagen y compártela manualmente.");
+          }
+        }, "image/png", 1);
       });
     }
   </script>
