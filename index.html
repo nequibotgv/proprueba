@@ -1,367 +1,90 @@
-<!-- Coloca este código completo en tu archivo HTML -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>NequiBotGV - Generador</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>Comprobante Hola NequiBotGV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- html2canvas para capturar -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      font-family: 'Manrope', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: #f9f9fb;
       min-height: 100vh;
+      display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      font-family: 'Manrope', Arial, sans-serif;
+      margin: 0;
     }
-    .formulario {
-      background: #111;
-      padding: 40px 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 128, 255, 0.4);
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
-    .titulo {
-      font-size: 32px;
-      font-weight: 700;
-      background: linear-gradient(90deg, #0044cc, #00bfff);
-      color: transparent;
-      -webkit-background-clip: text;
-      background-clip: text;
-      margin-bottom: 20px;
-      text-shadow: 0px 0px 15px rgba(0, 191, 255, 0.8);
-    }
-    .input-campo {
-      width: 90%;
-      padding: 14px;
-      margin: 12px 0;
-      border: 1px solid #444;
-      border-radius: 12px;
-      font-size: 16px;
-      background: #222;
-      color: #fff;
-      font-family: 'Manrope', sans-serif;
-    }
-    .boton {
-      margin-top: 10px;
-      padding: 14px;
-      width: 90%;
-      font-size: 16px;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Manrope', sans-serif;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      color: #fff;
-    }
-    .boton:hover { opacity: 0.9; }
-    .boton-whatsapp { background: linear-gradient(90deg, #00c853, #00e676); }
-    .boton-clave { background: linear-gradient(90deg, #cc0000, #ff1744); }
-    .boton-cambiar { background: linear-gradient(90deg, #6a1b9a, #8e24aa); }
-    .boton-descargar { background: linear-gradient(90deg, #1976d2, #2196f3); }
-
-    .container {
+    .comprobante-container {
       position: relative;
-      width: 100%;
-      max-width: 390px;
-      margin: 20px auto;
-      background: #fff;
-      overflow: visible;
-      display: none;
-      transform-origin: top left;
-      transform: scale(1);
+      width: 350px;   /* Cambia a 100% para responsivo */
+      max-width: 97vw;
+      margin: 30px auto;
     }
-
-    .container img {
+    .comprobante-img {
       width: 100%;
       display: block;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px #0001;
     }
-
-    .input-overlay {
+    .texto-saludo {
       position: absolute;
-      background: transparent;
-      border: none;
-      font-size: 14px;
-      color: #3C114B;
-      font-weight: 500;
-      text-align: left;
-      font-family: 'Manrope', sans-serif;
-      outline: none;
-      pointer-events: none;
-      line-height: 1.4;
-      padding-bottom: 3px;
-      padding-top: 1px;
-      height: auto;
-    }
-
-    /* Campo nombre ajustado para que no corte letras como "g", "y", "p" */
-    #nombre {
-      top: calc(412.26px * var(--escala));
-      left: calc((17px + 20px) * var(--escala));
-      line-height: 1.6;
-      padding-bottom: 5px;
-    }
-    #valor {
-      top: calc((449.48px + 12px) * var(--escala));
-      left: calc((17px + 20px) * var(--escala));
-    }
-    #nequi {
-      top: calc((449.48px + 57px) * var(--escala));
-      left: calc((17px + 20px) * var(--escala));
-    }
-    #fecha {
-      top: calc((555px) * var(--escala));
-      left: calc((39px) * var(--escala));
-      white-space: normal;
-    }
-    #referencia {
-      top: calc((540.26px + 58px + 2px) * var(--escala));
-      left: calc((17px + 20px) * var(--escala));
-    }
-
-    #verPantallaCompleta {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 12px 20px;
-      font-size: 16px;
-      background: #1e88e5;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Manrope', sans-serif;
-      font-weight: bold;
-      z-index: 9999;
-    }
-
-    .mensaje-carga {
-      position: fixed;
-      top: 0;
+      top: 42%;     /* Ajusta para tu diseño */
       left: 0;
       width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 24px;
-      color: #fff;
-      font-family: 'Manrope', sans-serif;
-      z-index: 9999;
-      visibility: hidden;
-      opacity: 0;
-      transition: visibility 0s, opacity 0.5s;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+      color: #3C114B;
+      text-shadow: 0 2px 8px #fff, 0 1px 1px #fff;
+      letter-spacing: 1px;
+      pointer-events: none;
     }
-
-    .mensaje-carga.mostrar {
-      visibility: visible;
-      opacity: 1;
+    .boton-descargar {
+      display: block;
+      margin: 30px auto 0 auto;
+      padding: 14px 34px;
+      font-size: 18px;
+      color: #fff;
+      background: #3C114B;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px #3c114b44;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      transition: background 0.2s;
+    }
+    .boton-descargar:active {
+      background: #661199;
     }
   </style>
 </head>
 <body>
-
-<!-- FORMULARIO -->
-<div class="formulario" id="pantalla">
-  <div class="titulo">NequiBotGV</div>
-  <button id="whatsapp" class="boton boton-whatsapp">¿No tienes clave? Contáctanos</button>
-  <button id="clave-ingreso" class="boton boton-clave">Ingresar Clave</button>
-  <button id="cambiar-clave-boton" class="boton boton-cambiar">Cambiar Clave</button>
-  <div id="contenido-oculto" style="display: none;">
-    <input type="text" id="input-nombre" class="input-campo" placeholder="Nombre del destinatario">
-    <input type="text" id="input-valor" class="input-campo" placeholder="Valor en $">
-    <input type="text" id="input-nequi" class="input-campo" placeholder="Número Nequi">
-    <select id="formato" class="input-campo">
-      <option value="png">Formato: PNG</option>
-      <option value="jpg">Formato: JPG</option>
-    </select>
-    <button id="generar" class="boton boton-descargar">Generar Comprobante</button>
-    <div id="admin-panel" style="display: none;">
-      <input type="text" id="nueva-clave" class="input-campo" placeholder="Nueva clave de acceso">
-      <button id="guardar-nueva-clave" class="boton">Guardar Nueva Clave</button>
-    </div>
+  <div class="comprobante-container" id="comprobante">
+    <img src="comprobante_base (14).png" alt="Comprobante" class="comprobante-img">
+    <div class="texto-saludo">Hola</div>
   </div>
-</div>
+  <button class="boton-descargar" onclick="descargarComprobante()">Descargar</button>
 
-<!-- COMPROBANTE -->
-<div class="container" id="captura">
-  <img src="comprobante_base.png" alt="Fondo" id="imagen-fondo">
-  <input type="text" id="nombre" class="input-overlay" readonly>
-  <input type="text" id="valor" class="input-overlay" readonly>
-  <input type="text" id="nequi" class="input-overlay" readonly>
-  <div id="fecha" class="input-overlay"></div>
-  <input type="text" id="referencia" class="input-overlay" readonly>
-</div>
-
-<button id="verPantallaCompleta">Ver en Pantalla Completa</button>
-
-<!-- Mensaje de carga -->
-<div class="mensaje-carga" id="mensaje-carga">
-  <pre>
-    Cargando comprobante...
-    Espere 5 segundos.
-  </pre>
-</div>
-
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-<script>
-let claveAcceso = "32097221381";
-const claveAdmin = "1395";
-
-document.getElementById('whatsapp').addEventListener('click', () => {
-  window.open('https://wa.me/573178793834?text=Hola%2C%20me%20gustar%C3%ADa%20obtener%20la%20clave%20de%20NequiBotGV.', '_blank');
-});
-
-document.getElementById('clave-ingreso').addEventListener('click', () => {
-  const clave = prompt("Ingrese la clave de acceso:");
-  if (clave === claveAdmin) {
-    document.getElementById('admin-panel').style.display = 'block';
-    mostrarFormulario();
-  } else if (clave === claveAcceso) {
-    mostrarFormulario();
-  } else {
-    alert("Clave incorrecta. Acceso denegado.");
-  }
-});
-
-document.getElementById('cambiar-clave-boton').addEventListener('click', () => {
-  const clave = prompt("Ingrese la clave de administrador:");
-  if (clave === claveAdmin) {
-    document.getElementById('admin-panel').style.display = 'block';
-    mostrarFormulario();
-  } else {
-    alert("Clave de administrador incorrecta.");
-  }
-});
-
-function mostrarFormulario() {
-  document.getElementById('contenido-oculto').style.display = 'block';
-  document.getElementById('whatsapp').style.display = 'none';
-  document.getElementById('clave-ingreso').style.display = 'none';
-  document.getElementById('cambiar-clave-boton').style.display = 'none';
-}
-
-document.getElementById('guardar-nueva-clave').addEventListener('click', () => {
-  const nueva = document.getElementById('nueva-clave').value.trim();
-  if (nueva) {
-    claveAcceso = nueva;
-    alert("Clave de acceso actualizada exitosamente.");
-    document.getElementById('nueva-clave').value = "";
-  }
-});
-
-document.getElementById('generar').addEventListener('click', () => {
-  if (!validarEntradas()) return;
-  const container = document.getElementById('captura');
-  const img = document.querySelector('#captura img');
-  const escala = Math.min(window.innerWidth / 390, 1);
-  container.style.setProperty('--escala', escala);
-  document.getElementById('pantalla').style.display = 'none';
-  container.style.display = 'block';
-  document.getElementById('nombre').value = document.getElementById('input-nombre').value;
-  document.getElementById('valor').value = formatValor(document.getElementById('input-valor').value);
-  document.getElementById('nequi').value = document.getElementById('input-nequi').value;
-  generarFecha();
-  generarReferencia();
-  const formato = document.getElementById('formato').value;
-
-  if (!img.complete || !img.naturalWidth) {
-    alert("La imagen de fondo no se ha cargado completamente. Inténtalo nuevamente.");
-    return;
-  }
-
-  document.getElementById('verPantallaCompleta').style.display = 'block';
-
-  setTimeout(() => {
-    descargarComprobante(formato);
-  }, 5200);
-});
-
-document.getElementById('verPantallaCompleta').addEventListener('click', () => {
-  const contenedor = document.getElementById('captura');
-  const btn = document.getElementById('verPantallaCompleta');
-  const mensajeCarga = document.getElementById('mensaje-carga');
-  if (!document.fullscreenElement) {
-    contenedor.requestFullscreen?.();
-    mensajeCarga.classList.add('mostrar');
-    setTimeout(() => mensajeCarga.classList.remove('mostrar'), 5000);
-    btn.textContent = "Salir de Pantalla Completa";
-  } else {
-    document.exitFullscreen?.();
-    btn.textContent = "Ver en Pantalla Completa";
-    mensajeCarga.classList.remove('mostrar');
-  }
-});
-
-function validarEntradas() {
-  const nombre = document.getElementById('input-nombre').value.trim();
-  const valor = document.getElementById('input-valor').value.trim();
-  const nequi = document.getElementById('input-nequi').value.trim();
-  if (!nombre || !valor || !nequi) {
-    alert("Todos los campos son obligatorios.");
-    return false;
-  }
-  if (isNaN(valor.replace(/\D/g, ''))) {
-    alert("El valor debe ser un número válido.");
-    return false;
-  }
-  if (nequi.length < 10) {
-    alert("El número Nequi debe tener al menos 10 dígitos.");
-    return false;
-  }
-  return true;
-}
-
-function generarFecha() {
-  const fecha = new Date();
-  const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-  const dia = fecha.getDate().toString().padStart(2, '0');
-  const mes = meses[fecha.getMonth()];
-  const anio = fecha.getFullYear();
-  let h = fecha.getHours(), m = fecha.getMinutes().toString().padStart(2, '0'),
-      ampm = h >= 12 ? 'p. m.' : 'a. m.';
-  h = h % 12 || 12;
-  document.getElementById('fecha').innerHTML = `${dia} de ${mes} de ${anio} a las ${h}:${m} ${ampm}`;
-}
-
-function generarReferencia() {
-  document.getElementById('referencia').value = 'M' + Math.floor(1e7 + Math.random() * 9e7);
-}
-
-function formatValor(valor) {
-  valor = valor.replace(/\D/g, '');
-  if (!valor) return "$ 0,00";
-  return `$ ${valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.')},00`;
-}
-
-function descargarComprobante(formato) {
-  html2canvas(document.getElementById('captura'), {
-    scale: 6,
-    useCORS: true
-  }).then(canvas => {
-    const link = document.createElement('a');
-    link.href = canvas.toDataURL(`image/${formato}`);
-    link.download = `comprobante.${formato}`;
-    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-      window.open(link.href, '_blank');
-    } else {
-      link.click();
+  <script>
+    function descargarComprobante() {
+      const comprobante = document.getElementById("comprobante");
+      html2canvas(comprobante, {
+        useCORS: true,
+        scale: 3
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'comprobante-hola.png';
+        link.href = canvas.toDataURL();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        alert("Comprobante guardado en Descargas o Galería.");
+      });
     }
-  }).catch(err => {
-    console.error("Error al generar imagen:", err);
-    alert("Ocurrió un error al generar el comprobante.");
-  });
-}
-</script>
+  </script>
 </body>
 </html>
