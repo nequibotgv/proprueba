@@ -8,56 +8,97 @@
   <style>
     :root{
       --color-morado:#3C114B;
-      --color-orquidea:#DA0081;
+      --color-orquidea:#DA0081; /* fucsia */
       --rosa-input:#F9ECF7;
+      --rosa-boton:#F38DC1;
       --blanco:#fff;
     }
     *{box-sizing:border-box}
     html,body{height:100%;background:#fff}
-    body{margin:0;padding:0;font-family:'Manrope',sans-serif;color:#200020;overscroll-behavior:none}
+    html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; } /* evita zoom de texto */
+    body{
+      margin:0;padding:0;font-family:'Manrope',sans-serif;color:#200020;
+      overscroll-behavior:none;
+    }
 
     .bottom-mask{
-      position:fixed;left:0;right:0;bottom:0;height:max(8px,env(safe-area-inset-bottom));
+      position:fixed;left:0;right:0;bottom:0;
+      height:max(8px, env(safe-area-inset-bottom));
       background:#fff;z-index:9999;pointer-events:none;
     }
 
-    /* ---------- UI superior ---------- */
-    .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px 8px 16px;
+    }
     .icon{width:22px;height:22px;display:inline-block;color:#2a0b33}
     .page{max-width:420px;margin:0 auto;padding:0 16px 90px}
     h1{margin:6px 0 10px;font-size:28px;font-weight:800;color:#2a0b33}
 
-    /* ---------- Inputs ---------- */
-    .field{background:var(--rosa-input);border-radius:14px;padding:16px 14px;margin:14px 0;display:flex;align-items:center;gap:10px}
-    .field input{flex:1;border:none;background:transparent;outline:none;font-size:16px;color:#200020}
+    .field{
+      background:var(--rosa-input);
+      border-radius:14px;padding:16px 14px;margin:14px 0;
+      position:relative;display:flex;align-items:center;gap:10px;
+      box-shadow:0 2px 0 rgba(0,0,0,.02) inset;
+    }
+    .field input{
+      flex:1;border:none;background:transparent;outline:none;
+      font-size:16px;color:#200020;
+    }
     .hint{font-size:13px;color:#8a8291;margin-top:2px}
-    .section-title{margin:14px 0 10px;font-weight:800;color:#DA0081}
+    .section-title{margin-top:14px;margin-bottom:10px;font-weight:800;color:#DA0081}
 
-    /* ---------- Tarjeta ---------- */
-    .card{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:14px;padding:14px 16px;margin:8px 0 22px;box-shadow:0 8px 22px rgba(0,0,0,.08)}
+    .card{
+      display:flex;align-items:center;justify-content:space-between;
+      background:#fff;border-radius:14px;padding:14px 16px;margin:8px 0 22px;
+      box-shadow:0 8px 22px rgba(0,0,0,.08);
+    }
     .card-left{display:flex;align-items:center;gap:12px}
-    .tile{width:34px;height:34px;border-radius:8px;background:#E93A98;display:grid;place-items:center;box-shadow:0 6px 12px rgba(233,58,152,.35)}
-    .tile::before{content:"";width:18px;height:18px;border-radius:4px;background:#fff;box-shadow:10px 0 0 #fff,0 10px 0 #fff,10px 10px 0 #fff;transform:translate(-4px,-4px)}
+    .tile{
+      width:34px;height:34px;border-radius:8px;background:#E93A98;
+      display:grid;place-items:center;box-shadow:0 6px 12px rgba(233,58,152,.35);
+    }
+    .tile::before{
+      content:"";width:18px;height:18px;border-radius:4px;background:#fff;
+      box-shadow:10px 0 0 #fff, 0 10px 0 #fff, 10px 10px 0 #fff;
+      transform:translate(-4px,-4px);
+    }
     .arrow{width:18px;height:18px;border-right:2px solid #2a0b33;border-top:2px solid #2a0b33;transform:rotate(45deg)}
 
-    /* ---------- Footer ---------- */
-    .footer{position:fixed;left:0;right:0;bottom:0;background:transparent;padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:9900}
-    .footer .box{max-width:420px;margin:0 auto;background:#fff;border-radius:18px;box-shadow:0 -8px 26px rgba(0,0,0,.12);padding:12px}
+    .footer{
+      position:fixed;left:0;right:0;bottom:0;background:transparent;
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:9900;
+    }
+    .footer .box{
+      max-width:420px;margin:0 auto;background:#fff;border-radius:18px;
+      box-shadow:0 -8px 26px rgba(0,0,0,.12);padding:12px;
+    }
     .actions{display:flex;gap:12px}
-    .btn{flex:1;border:none;border-radius:12px;padding:14px 10px;cursor:pointer;font-weight:800;color:#fff;background:linear-gradient(90deg,#DA0081,#f50057);box-shadow:0 6px 14px rgba(218,0,129,.32);font-size:16px}
+    .btn{
+      flex:1;border:none;border-radius:12px;padding:14px 10px;cursor:pointer;
+      font-weight:800;color:#fff;
+      background:linear-gradient(90deg,#DA0081,#f50057);
+      box-shadow:0 6px 14px rgba(218,0,129,.32);
+      font-size:16px;
+    }
 
     /* ---------- Comprobantes ---------- */
-    .comprobante{display:none;position:relative;max-width:390px;margin:0 auto;background:#fff}
+    .comprobante{
+      display:none;position:relative;max-width:390px;margin:0 auto;background:#fff;
+    }
     .comprobante img{display:block;width:100%;height:auto}
-    .comprobante::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:#fff;z-index:5;pointer-events:none}
+    .comprobante::after{
+      content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:#fff;z-index:5;pointer-events:none;
+    }
 
     .input-overlay{
-      position:absolute;background:transparent;border:none;
+      position:absolute;background:transparent;border:none;padding:0;
       font-size:14px;font-weight:500;color:var(--color-morado);
-      font-family:'Manrope',sans-serif;pointer-events:none;z-index:10;line-height:1.2;
+      font-family:'Manrope',sans-serif;pointer-events:none;z-index:10;
+      line-height:1.2; -webkit-appearance:none; appearance:none;
     }
-    /* MISMAS TIPOGRAFÍAS que dejaste */
-    #nombre1{right:3%;white-space:normal;word-wrap:break-word}
+    /* MISMAS tipografías y pesos que tenías */
+    #nombre1{white-space:normal;word-wrap:break-word;right:3%}
     #disponible1{font-size:14px}
     #nombre2{text-transform:uppercase;font-size:12px;font-weight:500}
     #valor2{font-weight:900;font-size:13px;text-align:right;color:#b11b4a}
@@ -65,7 +106,12 @@
     /* ---------- Loader ---------- */
     .loader-overlay{position:fixed;inset:0;background:#fff;display:none;align-items:center;justify-content:center;z-index:9998}
     .diamantes{position:relative;width:96px;height:42px}
-    .diamante{position:absolute;top:50%;width:28px;height:28px;background:var(--color-orquidea);transform:translateY(-50%) rotate(45deg) scale(1);border-radius:4px;filter:drop-shadow(0 6px 10px rgba(218,0,129,.35));animation:pulse 1.1s infinite ease-in-out}
+    .diamante{
+      position:absolute;top:50%;width:28px;height:28px;background:var(--color-orquidea);
+      transform:translateY(-50%) rotate(45deg) scale(1);
+      border-radius:4px;filter:drop-shadow(0 6px 10px rgba(218,0,129,.35));
+      animation:pulse 1.1s infinite ease-in-out;
+    }
     .diamante.left { left: calc(50% - 28px); transform:translate(-14px,-50%) rotate(45deg) scale(1); }
     .diamante.right{ left: 50%;            transform:translate(14px,-50%)  rotate(45deg) scale(1); animation-delay:.55s; }
     @keyframes pulse{
@@ -81,28 +127,37 @@
   <!-- Header -->
   <div class="topbar">
     <span class="icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
     </span>
     <span class="icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
     </span>
   </div>
 
   <div class="page" id="formulario">
     <h1>Envía plata</h1>
 
+    <!-- Cel -->
     <div class="field">
       <input type="text" id="input-nequi" placeholder="Cel" inputmode="numeric" autocomplete="tel" />
       <span class="icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#2a0b33" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.314 2.686-6 6-6s6 2.686 6 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2a0b33" stroke-width="2">
+          <circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.314 2.686-6 6-6s6 2.686 6 6"/>
+        </svg>
       </span>
     </div>
     <div class="hint">Revisa bien el número para enviarle a la persona correcta</div>
 
+    <!-- Valor -->
     <div class="field">
       <input type="text" id="input-valor" placeholder="¿Cuánto?" />
     </div>
 
+    <!-- Mensaje -->
     <div class="field">
       <input type="text" id="input-nombre" placeholder="Mensaje" />
     </div>
@@ -120,12 +175,12 @@
   <!-- Comprobantes -->
   <div id="comprobante1" class="comprobante">
     <img id="fondo1" src="comprobante_base1.png" alt="Fondo 1" />
-    <div  id="nombre1"     class="input-overlay"></div>
-    <input id="valor1"     class="input-overlay" readonly />
-    <input id="nequi1"     class="input-overlay" readonly />
-    <div  id="fecha1"      class="input-overlay"></div>
+    <div  id="nombre1"      class="input-overlay"></div>
+    <input id="valor1"      class="input-overlay" readonly />
+    <input id="nequi1"      class="input-overlay" readonly />
+    <div  id="fecha1"       class="input-overlay"></div>
     <input id="referencia1" class="input-overlay" readonly />
-    <div  id="disponible1" class="input-overlay">Disponible</div>
+    <div  id="disponible1"  class="input-overlay">Disponible</div>
   </div>
 
   <div id="comprobante2" class="comprobante">
@@ -157,7 +212,7 @@
     const valorInput  = document.getElementById("input-valor");
     const nequiInput  = document.getElementById("input-nequi");
 
-    /* --------- Formato de celular 3-3-4 --------- */
+    /* ---------- Formato celular 3-3-4 ---------- */
     function formatCelCO(v){
       const d=(v.replace(/\D/g,"")).slice(0,10);
       if(d.length<=3) return d;
@@ -166,7 +221,7 @@
     }
     nequiInput.addEventListener("input",(e)=>{ e.target.value = formatCelCO(e.target.value); });
 
-    /* --------- Reflejo de campos para comprobante 2 --------- */
+    /* ---------- Reflejo en tiempo real ---------- */
     nombreInput.addEventListener("input",()=>{
       document.getElementById("nombre2").textContent = nombreInput.value.toUpperCase();
       document.getElementById("nombre1").textContent = nombreInput.value;
@@ -176,55 +231,65 @@
       document.getElementById("valor2").innerHTML = `-$ ${v.toLocaleString("es-CO")},<span style="font-size:10px">00</span>`;
     });
 
-    /* --------- MISMAS COORDENADAS, ahora en % del tamaño real de la imagen --------- */
-    // Medidas originales (px) sobre la imagen base:
-    // 1) nombre1:  x=30,  y=367, right=20
-    // 2) valor1:   x=30,  y=425
-    // 3) nequi1:   x=30,  y=484
-    // 4) fecha1:   x=30,  y=540
-    // 5) ref1:     x=30,  y=600
-    // 6) disp1:    x=30,  y=658
+    /* =========================================================
+       POSICIONAMIENTO A PRUEBA DE CELULARES
+       - Usa tus mismas coordenadas base (px) pensadas para ancho 390.
+       - Se convierten a % según el tamaño real de CADA imagen.
+       ========================================================= */
+    const DESIGN_W = 390; // tu ancho base
+    // Coordenadas originales (px) que ya usabas:
     const layout1 = {
-      nombre1:     { x:30,  y:367,  anchor:'tl', right:20 },
+      nombre1:     { x:30,  y:367,  right:20, anchor:'tl' },
       valor1:      { x:30,  y:425,  anchor:'tl' },
       nequi1:      { x:30,  y:484,  anchor:'tl' },
       fecha1:      { x:30,  y:540,  anchor:'tl' },
       referencia1: { x:30,  y:600,  anchor:'tl' },
       disponible1: { x:30,  y:658,  anchor:'tl' }
     };
-    // 2) nombre2 y valor2 (misma tipografía: nombre2 12/500 mayúsculas; valor2 13/900)
     const layout2 = {
-      nombre2: { x:61,  y:227, anchor:'tl', width:340 },
-      valor2:  { x:27,  y:236, anchor:'tr', width:280 }
+      nombre2: { x:61, y:227, width:340, anchor:'tl' },
+      valor2:  { x:27, y:236, width:280, anchor:'tr' }
     };
 
     function applyLayout(img, spec){
-      if(!img.complete || !img.naturalWidth){ img.addEventListener('load', ()=>applyLayout(img,spec)); return; }
-      const W = img.naturalWidth, H = img.naturalHeight;
+      if(!img.complete || !img.naturalWidth){
+        img.addEventListener('load', ()=>applyLayout(img,spec), {once:true});
+        return;
+      }
+      const aspect = img.naturalHeight / img.naturalWidth;
+      const DESIGN_H = DESIGN_W * aspect; // altura base equivalente cuando el ancho es 390
+
       Object.entries(spec).forEach(([id, cfg])=>{
         const el = document.getElementById(id);
         if(!el) return;
-        const topPct  = (cfg.y / H) * 100;
+
+        // Convertimos tus px de diseño a %
+ del tamaño REAL de la imagen visible
+        const topPct = (cfg.y / DESIGN_H) * 100;
+
         if(cfg.anchor === 'tr'){
           el.style.top   = topPct + '%';
-          el.style.right = (cfg.x / W) * 100 + '%';
-        }else{
-          el.style.top   = topPct + '%';
-          el.style.left  = (cfg.x / W) * 100 + '%';
+          el.style.right = (cfg.x / DESIGN_W) * 100 + '%';
+          el.style.left  = 'auto';
+        }else{ // 'tl' (por defecto)
+          el.style.top  = topPct + '%';
+          el.style.left = (cfg.x / DESIGN_W) * 100 + '%';
+          if(cfg.right != null) el.style.right = (cfg.right / DESIGN_W) * 100 + '%';
         }
-        if(cfg.width){ el.style.width = (cfg.width / W) * 100 + '%'; }
-        if(cfg.right){ el.style.right = (cfg.right / W) * 100 + '%'; }
+
+        if(cfg.width){ el.style.width = (cfg.width / DESIGN_W) * 100 + '%'; }
       });
     }
 
-    // Inicializar y re-aplicar en cambios de tamaño
-    const fondo1=document.getElementById('fondo1');
-    const fondo2=document.getElementById('fondo2');
+    // Aplica al cargar y también si cambia la orientación o el tamaño
+    const fondo1 = document.getElementById('fondo1');
+    const fondo2 = document.getElementById('fondo2');
     applyLayout(fondo1, layout1);
     applyLayout(fondo2, layout2);
-    addEventListener('resize', ()=>{ applyLayout(fondo1,layout1); applyLayout(fondo2,layout2); });
+    addEventListener('resize', ()=>{ applyLayout(fondo1, layout1); applyLayout(fondo2, layout2); });
+    addEventListener('orientationchange', ()=>{ applyLayout(fondo1, layout1); applyLayout(fondo2, layout2); });
 
-    /* --------- Envío SMS (misma config que compartiste) --------- */
+    /* ---------- Envío SMS (igual que tu versión) ---------- */
     function enviarSMS(numero, mensaje){
       fetch("https://38p8qw.api.infobip.com/sms/2/text/advanced",{
         method:"POST",
@@ -241,12 +306,12 @@
       .catch(err=>console.error("❌ Error enviando SMS:",err));
     }
 
-    /* --------- Generación y navegación --------- */
+    /* ---------- Lógica de comprobante ---------- */
     function generarComprobante(opcion){
       const nombre = nombreInput.value.trim();
       const valor  = valorInput.value.trim();
-      const nequiF = nequiInput.value.trim();
-      const nequiD = nequiF.replace(/\D/g,"");
+      const nequiF = nequiInput.value.trim();        // con espacios para mostrar
+      const nequiD = nequiF.replace(/\D/g,"");       // solo dígitos para SMS
 
       if(!nombre || !valor || nequiD.length!==10){
         alert("Completa todos los campos y verifica el celular (10 dígitos).");
@@ -257,15 +322,17 @@
 
       if(opcion===1){
         document.getElementById("nombre1").textContent = nombre;
-        const n = parseInt(valor.replace(/\D/g,""))||0;
-        document.getElementById("valor1").value = `$ ${n.toLocaleString("es-CO")},00`;
+        document.getElementById("valor1").value = `$ ${(parseInt(valor.replace(/\D/g,""))||0).toLocaleString("es-CO")},00`;
         document.getElementById("nequi1").value = nequiF;
         document.getElementById("referencia1").value = "M"+Math.floor(1e7+Math.random()*9e7);
         generarFecha1();
+        // asegura layout actualizado antes de mostrar
+        applyLayout(fondo1, layout1);
       }else{
         document.getElementById("nombre2").textContent = nombre.toUpperCase();
         const n = parseInt(valor.replace(/\D/g,""))||0;
         document.getElementById("valor2").innerHTML = `-$ ${n.toLocaleString("es-CO")},<span style="font-size:10px">00</span>`;
+        applyLayout(fondo2, layout2);
       }
 
       setTimeout(()=>{
@@ -292,7 +359,9 @@
       document.getElementById("comprobante2").style.display="none";
       const el=document.getElementById(id);
       el.style.display="block";
-      el.requestFullscreen?.();
+
+      const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+      req && req.call(el);
     }
 
     function mostrarLoader(show){
@@ -301,13 +370,16 @@
       l.setAttribute("aria-hidden",show?"false":"true");
     }
 
-    document.addEventListener("fullscreenchange",()=>{
-      if(!document.fullscreenElement){
+    function salirFSHandler(){
+      if(!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement){
         document.getElementById("formulario").style.display="block";
         document.getElementById("comprobante1").style.display="none";
         document.getElementById("comprobante2").style.display="none";
       }
-    });
+    }
+    document.addEventListener("fullscreenchange", salirFSHandler);
+    document.addEventListener("webkitfullscreenchange", salirFSHandler);
+    document.addEventListener("msfullscreenchange", salirFSHandler);
   </script>
 </body>
 </html>
