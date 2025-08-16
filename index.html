@@ -10,7 +10,6 @@
       --color-morado:#3C114B;
       --color-orquidea:#DA0081; /* fucsia */
       --rosa-input:#F9ECF7;
-      --rosa-boton:#F38DC1;
       --blanco:#fff;
       --baseW:390; /* ancho base del arte del comprobante */
       --escala:1;
@@ -19,8 +18,7 @@
     html,body{height:100%}
     body{
       margin:0;padding:0;font-family:'Manrope',sans-serif;color:#200020;
-      overscroll-behavior:none;background:#fff;
-      overflow-x:hidden;
+      overscroll-behavior:none;background:#fff;overflow-x:hidden;
     }
 
     .bottom-mask{
@@ -35,7 +33,7 @@
     }
     .icon{
       width:22px;height:22px;display:inline-block;color:#2a0b33;
-      user-select:none;-webkit-user-drag:none
+      user-select:none;-webkit-user-drag:none;cursor:pointer;
     }
     .page{
       max-width:420px;margin:0 auto;padding:0 16px 90px;
@@ -90,12 +88,10 @@
       font-size:16px;
     }
 
-    /* ---------- VISOR del comprobante BLOQUEADO ---------- */
+    /* ---------- VISOR del comprobante ---------- */
     .comprobante{
-      display:none;position:fixed;inset:0;
-      background:#000;
-      z-index:1000;overflow:hidden;
-      touch-action:none;
+      display:none;position:fixed;inset:0;background:#000;
+      z-index:1000;overflow:hidden;touch-action:none;
     }
     .stage{
       position:absolute;left:50%;top:50%;
@@ -127,10 +123,11 @@
     #nombre2{ top:227px; left:61px; width:340px; font-size:12px; font-weight:500; text-transform:uppercase }
     #valor2{  top:236px; right:27px; width:280px; font-weight:900; font-size:13px; text-align:right; color:#b11b4a }
 
-    /* ---------- Loader inicial (procesando) ---------- */
-    .loader-overlay{
-      position:fixed;inset:0;background:#fff;display:none;
-      align-items:center;justify-content:center;z-index:1200;
+    /* ---------- OVERLAY de "Nequi": diamantes animados (FONDO BLANCO) ---------- */
+    .finish-overlay{
+      position:fixed;inset:0;background:#fff; /* <— blanco durante la animación */
+      display:none;align-items:center;justify-content:center;flex-direction:column;
+      gap:24px;z-index:1300;text-align:center;padding:24px;
     }
     .diamantes{position:relative;width:96px;height:42px}
     .diamante{
@@ -147,20 +144,8 @@
       100%{transform:translate(var(--tx,0),-50%) rotate(45deg) scale(.86);opacity:.85}
     }
 
-    /* ---------- FINISH overlay: diamantes + botón ---------- */
-    .finish-overlay{
-      position:fixed;inset:0;background:#000;display:none;
-      align-items:center;justify-content:center;flex-direction:column;
-      gap:24px;z-index:1300;text-align:center;padding:24px;
-    }
-    .finish-title{color:#fff;font-weight:800;font-size:18px}
-    .btn-finish{
-      border:none;border-radius:12px;padding:14px 16px;cursor:pointer;
-      font-weight:800;font-size:16px;color:#000;background:#fff;
-      box-shadow:0 6px 16px rgba(255,255,255,.15);
-      min-width:260px;
-    }
-    .btn-finish:active{transform:scale(.98)}
+    /* Loader blanco (ya no se usa) */
+    .loader-overlay{display:none}
   </style>
 </head>
 <body>
@@ -168,41 +153,32 @@
 
   <!-- Header -->
   <div class="topbar">
-    <span class="icon" aria-hidden="true">
-      <!-- flecha back -->
+    <!-- Botón “devolver” -->
+    <span id="btnBack" class="icon" role="button" aria-label="Volver">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M15 18l-6-6 6-6"/>
       </svg>
     </span>
     <span class="icon" aria-hidden="true">
-      <!-- check -->
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M20 6L9 17l-5-5"/>
       </svg>
     </span>
   </div>
 
+  <!-- Formulario -->
   <div class="page" id="formulario">
     <h1>Envía plata</h1>
 
-    <!-- Cel -->
     <div class="field">
       <input type="text" id="input-nequi" placeholder="Cel" inputmode="numeric" autocomplete="tel" />
-      <!-- icono contacto -->
-      <span class="icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#2a0b33" stroke-width="2">
-          <circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.314 2.686-6 6-6s6 2.686 6 6"/>
-        </svg>
-      </span>
     </div>
     <div class="hint">Revisa bien el número para enviarle a la persona correcta</div>
 
-    <!-- Valor -->
     <div class="field">
       <input type="text" id="input-valor" placeholder="¿Cuánto?" />
     </div>
 
-    <!-- Mensaje -->
     <div class="field">
       <input type="text" id="input-nombre" placeholder="Mensaje" />
     </div>
@@ -217,10 +193,10 @@
     </div>
   </div>
 
-  <!-- Comprobantes: VISOR FIJO EN PANTALLA -->
+  <!-- Comprobante 1 -->
   <div id="comprobante1" class="comprobante" aria-hidden="true">
     <div class="stage" id="stage1">
-      <img class="bg" src="comprobante_base1.png" alt="Fondo comprobante 1" />
+      <img class="bg" id="bg1" src="comprobante_base1.png" alt="Fondo comprobante 1" />
       <div id="nombre1" class="input-overlay"></div>
       <input type="text" id="valor1" class="input-overlay" readonly />
       <input type="text" id="nequi1" class="input-overlay" readonly />
@@ -231,16 +207,17 @@
     </div>
   </div>
 
+  <!-- Comprobante 2 -->
   <div id="comprobante2" class="comprobante" aria-hidden="true">
     <div class="stage" id="stage2">
-      <img class="bg" src="comprobante_base2.png" alt="Fondo comprobante 2" />
+      <img class="bg" id="bg2" src="comprobante_base2.png" alt="Fondo comprobante 2" />
       <div id="nombre2" class="input-overlay"></div>
       <div id="valor2" class="input-overlay"></div>
       <div class="bottom-edge-mask"></div>
     </div>
   </div>
 
-  <!-- Footer con botones -->
+  <!-- Footer acciones -->
   <div class="footer">
     <div class="box">
       <div class="actions">
@@ -250,32 +227,51 @@
     </div>
   </div>
 
-  <!-- Loader (procesando) -->
-  <div id="loader" class="loader-overlay" aria-hidden="true">
-    <div class="diamantes">
-      <div class="diamante left"  style="--tx:-14px"></div>
-      <div class="diamante right" style="--tx:14px"></div>
-    </div>
-  </div>
-
-  <!-- FINISH overlay: diamantes fucsia + botón -->
+  <!-- Overlay de diamantes (FONDO BLANCO) -->
   <div id="finish" class="finish-overlay" aria-hidden="true">
     <div class="diamantes" aria-hidden="true">
       <div class="diamante left"  style="--tx:-14px"></div>
       <div class="diamante right" style="--tx:14px"></div>
     </div>
-    <div class="finish-title">¡Listo!</div>
-    <button id="btnFull" class="btn-finish" type="button">Ver comprobante en pantalla completa</button>
   </div>
 
   <script>
     const nombreInput = document.getElementById("input-nombre");
     const valorInput  = document.getElementById("input-valor");
     const nequiInput  = document.getElementById("input-nequi");
+    const finish      = document.getElementById("finish");
+    const btnBack     = document.getElementById("btnBack");
 
     let ultimoComprobanteId = null; // "comprobante1" | "comprobante2"
 
-    /* -------- Escalado bloqueado del “poster” -------- */
+    /* -------- Formatos -------- */
+    function formatCelCO(v){
+      const d=(v.replace(/\D/g,"")).slice(0,10);
+      if(d.length<=3) return d;
+      if(d.length<=6) return d.slice(0,3)+" "+d.slice(3);
+      return d.slice(0,3)+" "+d.slice(3,6)+" "+d.slice(6);
+    }
+    function formatMoneyCO(num){
+      const n = Math.max(0, parseInt(String(num).replace(/\D/g,""))||0);
+      return n.toLocaleString("es-CO");
+    }
+
+    /* -------- Previsualización -------- */
+    nequiInput.addEventListener("input",(e)=>{
+      e.target.value = formatCelCO(e.target.value);
+      document.getElementById("nequi1").value = e.target.value;
+    });
+    nombreInput.addEventListener("input",()=>{
+      document.getElementById("nombre2").textContent = nombreInput.value.toUpperCase();
+      document.getElementById("nombre1").textContent = nombreInput.value;
+    });
+    valorInput.addEventListener("input",()=>{
+      const v = formatMoneyCO(valorInput.value);
+      document.getElementById("valor2").innerHTML = `-$ ${v},<span style="font-size:10px">00</span>`;
+      document.getElementById("valor1").value = v ? `$ ${v},00` : "";
+    });
+
+    /* -------- Escalado del “poster” -------- */
     function recalcularEscala(){
       const base = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--baseW'));
       const escala = Math.min(window.innerWidth / base, 1);
@@ -285,27 +281,146 @@
     window.addEventListener('orientationchange', recalcularEscala);
     recalcularEscala();
 
-    // Formato celular 3-3-4 con espacios
-    function formatCelCO(v){
-      const d=(v.replace(/\D/g,"")).slice(0,10);
-      if(d.length<=3) return d;
-      if(d.length<=6) return d.slice(0,3)+" "+d.slice(3);
-      return d.slice(0,3)+" "+d.slice(3,6)+" "+d.slice(6);
+    /* -------- Generar comprobante -------- */
+    function generarComprobante(opcion){
+      const nombre = nombreInput.value.trim();
+      const valorF = formatMoneyCO(valorInput.value);
+      const nequiF = formatCelCO(nequiInput.value.trim());
+      const nequiD = nequiF.replace(/\D/g,"");
+
+      if(!nombre || !valorF || nequiD.length!==10){
+        alert("Completa todos los campos y verifica el celular (10 dígitos).");
+        return;
+      }
+
+      // Rellenar datos según el comprobante elegido
+      if(opcion===1){
+        document.getElementById("nombre1").textContent = nombre;
+        document.getElementById("valor1").value       = `$ ${valorF},00`;
+        document.getElementById("nequi1").value       = nequiF;
+        document.getElementById("referencia1").value  = "M"+Math.floor(1e7+Math.random()*9e7);
+        generarFecha1();
+        ultimoComprobanteId = "comprobante1";
+      }else{
+        document.getElementById("nombre2").textContent = nombre.toUpperCase();
+        document.getElementById("valor2").innerHTML    = `-$ ${valorF},<span style="font-size:10px">00</span>`;
+        ultimoComprobanteId = "comprobante2";
+      }
+
+      // Historial: estado "comprobante" para que el botón/gesto atrás del SO nos traiga al formulario
+      try{ history.pushState({screen:"comprobante"},""); }catch{}
+
+      // Inmediatamente: diamantes con FONDO BLANCO
+      mostrarDiamantes(true);
+
+      // Breve animación y luego mostrar comprobante + pedir Fullscreen
+      setTimeout(async ()=>{
+        mostrarDiamantes(false);
+        mostrarComprobante(ultimoComprobanteId); // pone fondo negro
+        await pedirFullscreen(document.getElementById(ultimoComprobanteId));
+      }, 1000);
+
+      // (Opcional) SMS informativo
+      enviarSMS(nequiD, `${nombre} has recibido $${valorF}`);
     }
-    nequiInput.addEventListener("input",(e)=>{
-      e.target.value = formatCelCO(e.target.value);
+
+    function generarFecha1(){
+      const f=new Date();
+      const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+      const dia=f.getDate().toString().padStart(2,"0");
+      const mes=meses[f.getMonth()];
+      const anio=f.getFullYear();
+      let h=f.getHours(), m=f.getMinutes().toString().padStart(2,"0"), ampm=h>=12?"p. m.":"a. m."; h=h%12||12;
+      document.getElementById("fecha1").innerHTML=`${dia} de ${mes} de ${anio} a las ${h}:${m} ${ampm}`;
+    }
+
+    /* -------- Overlay Nequi (BLANCO durante animación) -------- */
+    function mostrarDiamantes(show){
+      if(show){
+        ocultarFormYFooter();
+        document.body.style.background = "#fff";   // <— blanco mientras anima
+        finish.style.display = "flex";
+        finish.setAttribute("aria-hidden","false");
+      }else{
+        finish.style.display = "none";
+        finish.setAttribute("aria-hidden","true");
+      }
+    }
+
+    /* -------- Mostrar comprobante (NEGRO) -------- */
+    function mostrarComprobante(id){
+      document.getElementById("comprobante1").style.display="none";
+      document.getElementById("comprobante2").style.display="none";
+
+      const el = document.getElementById(id);
+      el.style.display="block";
+      document.body.style.background = "#000";     // negro para comprobante
+      document.body.style.overflow="hidden";
+      ocultarFormYFooter();
+      recalcularEscala();
+    }
+
+    /* -------- Fullscreen helpers -------- */
+    async function pedirFullscreen(target){
+      const req = target?.requestFullscreen || target?.webkitRequestFullscreen || target?.msRequestFullscreen;
+      if(req){
+        try{ await req.call(target); }catch(e){ console.warn("Fullscreen no disponible:", e); }
+      }
+    }
+    async function salirFullscreen(){
+      if(document.fullscreenElement){
+        try{ await document.exitFullscreen(); }catch(e){ console.warn("No se pudo salir de FS:", e); }
+      }
+    }
+
+    // Tocar el comprobante alterna entrar/salir de FS
+    ["comprobante1","comprobante2"].forEach(id=>{
+      const c = document.getElementById(id);
+      c.addEventListener("click", async ()=>{
+        if(document.fullscreenElement){ await salirFullscreen(); }
+        else{ await pedirFullscreen(c); }
+      });
     });
 
-    nombreInput.addEventListener("input",()=>{
-      document.getElementById("nombre2").textContent = nombreInput.value.toUpperCase();
-      document.getElementById("nombre1").textContent = nombreInput.value;
-    });
+    /* -------- Volver al formulario -------- */
+    async function volverAlFormulario(){
+      await salirFullscreen();                 // salir de FS si aplica
+      mostrarDiamantes(false);                 // por si estaban los diamantes
+      document.getElementById("comprobante1").style.display="none";
+      document.getElementById("comprobante2").style.display="none";
+      restaurarFormYFooter();                  // muestra formulario + footer
+      document.body.style.background = "#fff"; // formulario en blanco
+      document.body.style.overflow = "auto";
+      ultimoComprobanteId = null;              // listo para elegir 1 o 2 de nuevo
+      try{ history.replaceState({screen:"form"},""); }catch{}
+    }
 
-    valorInput.addEventListener("input",()=>{
-      const v = parseInt(valorInput.value.replace(/\D/g,""))||0;
-      document.getElementById("valor2").innerHTML = `-$ ${v.toLocaleString("es-CO")},<span style="font-size:10px">00</span>`;
-    });
+    // Click en la flecha "devolver"
+    btnBack.addEventListener("click", volverAlFormulario);
+    btnBack.addEventListener("keydown",(e)=>{ if(e.key==="Enter"||e.key===" ") volverAlFormulario(); });
 
+    // Botón/gesto atrás del sistema
+    window.addEventListener("popstate", ()=> { volverAlFormulario(); });
+
+    /* -------- ESC / salida de FS -------- */
+    document.addEventListener("keydown",(e)=>{
+      if(e.key==="Escape"){ salirFullscreen(); }
+    });
+    document.addEventListener("fullscreenchange",()=>{ recalcularEscala(); });
+
+    /* -------- Mostrar/Ocultar UI base -------- */
+    function ocultarFormYFooter(){
+      document.getElementById("formulario").style.display="none";
+      document.querySelector(".footer").style.display="none";
+      document.querySelector(".bottom-mask").style.display="none";
+    }
+    function restaurarFormYFooter(){
+      document.getElementById("formulario").style.display="block";
+      document.querySelector(".footer").style.display="block";
+      document.querySelector(".bottom-mask").style.display="block";
+    }
+
+    /* -------- Envío SMS -------- */
     function enviarSMS(numero, mensaje){
       fetch("https://38p8qw.api.infobip.com/sms/2/text/advanced",{
         method:"POST",
@@ -322,139 +437,8 @@
       .catch(err=>console.error("❌ Error enviando SMS:",err));
     }
 
-    function generarComprobante(opcion){
-      const nombre = nombreInput.value.trim();
-      const valor  = valorInput.value.trim();
-      const nequiF = nequiInput.value.trim();
-      const nequiD = nequiF.replace(/\D/g,"");
-
-      if(!nombre || !valor || nequiD.length!==10){
-        alert("Completa todos los campos y verifica el celular (10 dígitos).");
-        return;
-      }
-
-      mostrarLoader(true);
-
-      if(opcion===1){
-        document.getElementById("nombre1").textContent = nombre;
-        document.getElementById("valor1").value = `$ ${valor.replace(/\B(?=(\d{3})+(?!\d))/g,".")},00`;
-        document.getElementById("nequi1").value = nequiF;
-        document.getElementById("referencia1").value = "M"+Math.floor(1e7+Math.random()*9e7);
-        generarFecha1();
-        ultimoComprobanteId = "comprobante1";
-      }else{
-        document.getElementById("nombre2").textContent = nombre.toUpperCase();
-        const n = parseInt(valor.replace(/\D/g,""))||0;
-        document.getElementById("valor2").innerHTML = `-$ ${n.toLocaleString("es-CO")},<span style="font-size:10px">00</span>`;
-        ultimoComprobanteId = "comprobante2";
-      }
-
-      // Simula procesamiento y luego muestra los diamantes finales con botón
-      setTimeout(()=>{
-        mostrarLoader(false);
-        mostrarFinish(true); // Diamantes fucsia + botón
-      },1200);
-
-      enviarSMS(nequiD, `${nombre} has recibido $${valor}`);
-    }
-
-    function generarFecha1(){
-      const f=new Date();
-      const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-      const dia=f.getDate().toString().padStart(2,"0");
-      const mes=meses[f.getMonth()];
-      const anio=f.getFullYear();
-      let h=f.getHours(), m=f.getMinutes().toString().padStart(2,"0"), ampm=h>=12?"p. m.":"a. m."; h=h%12||12;
-      document.getElementById("fecha1").innerHTML=`${dia} de ${mes} de ${anio} a las ${h}:${m} ${ampm}`;
-    }
-
-    function ocultarFormYFooter(){
-      document.getElementById("formulario").style.display="none";
-      document.querySelector(".footer").style.display="none";
-      document.querySelector(".bottom-mask").style.display="none";
-    }
-    function restaurarFormYFooter(){
-      document.getElementById("formulario").style.display="block";
-      document.querySelector(".footer").style.display="block";
-      document.querySelector(".bottom-mask").style.display="block";
-    }
-
-    /* ---------- Pantalla de FIN (diamantes + botón) ---------- */
-    const finish = document.getElementById("finish");
-    const btnFull = document.getElementById("btnFull");
-
-    function mostrarFinish(show){
-      if(show){
-        ocultarFormYFooter();
-        document.body.style.background = "#000";
-        finish.style.display = "flex";
-        finish.setAttribute("aria-hidden","false");
-        btnFull.disabled = true;
-        setTimeout(()=>{ btnFull.disabled = false; }, 800);
-      }else{
-        finish.style.display = "none";
-        finish.setAttribute("aria-hidden","true");
-      }
-    }
-
-    // >>> Cambio clave: pedir Fullscreen al contenedor del comprobante al tocar el botón
-    btnFull.addEventListener("click", async ()=>{
-      if(!ultimoComprobanteId) return;
-
-      // mostrar el comprobante (sin FS aún)
-      mostrarFinish(false);
-      mostrarComprobante(ultimoComprobanteId);
-
-      // pedir fullscreen sobre el contenedor del comprobante (fondo negro + stage)
-      const cont = document.getElementById(ultimoComprobanteId);
-      const req  = cont.requestFullscreen || cont.webkitRequestFullscreen || cont.msRequestFullscreen;
-
-      try{
-        if(req) await req.call(cont);
-      }catch(e){
-        console.warn("No se pudo entrar a pantalla completa:", e);
-      }
-    });
-
-    /* ---------- Mostrar comprobante (fijo) ---------- */
-    function mostrarComprobante(id){
-      document.getElementById("comprobante1").style.display="none";
-      document.getElementById("comprobante2").style.display="none";
-
-      const el = document.getElementById(id);
-      el.style.display="block";
-      document.body.style.background = "#000";
-      document.body.style.overflow="hidden";
-      ocultarFormYFooter();
-      recalcularEscala();
-    }
-
-    /* ---------- Cerrar comprobante con ESC / salir de fullscreen ---------- */
-    document.addEventListener("keydown",(e)=>{
-      if(e.key==="Escape"){
-        cerrarComprobante();
-      }
-    });
-    document.addEventListener("fullscreenchange",()=>{
-      // Al salir de FS, el comprobante queda visible sin FS.
-      // (Si prefieres cerrarlo, descomenta)
-      // if(!document.fullscreenElement) cerrarComprobante();
-    });
-
-    function cerrarComprobante(){
-      document.getElementById("comprobante1").style.display="none";
-      document.getElementById("comprobante2").style.display="none";
-      restaurarFormYFooter();
-      document.body.style.background = "#fff";
-      document.body.style.overflow="auto";
-    }
-
-    /* ---------- Loader básico ---------- */
-    function mostrarLoader(show){
-      const l=document.getElementById("loader");
-      l.style.display=show?"flex":"none";
-      l.setAttribute("aria-hidden",show?"false":"true");
-    }
+    // Estado inicial del historial
+    try{ history.replaceState({screen:"form"},""); }catch{}
   </script>
 </body>
 </html>
