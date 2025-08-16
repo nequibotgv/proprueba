@@ -441,4 +441,128 @@
     try{ history.replaceState({screen:"form"},""); }catch{}
   </script>
 </body>
+  <!-- ====== BLOQUE DE ACCESO: pegar justo antes de </body> ====== -->
+<style>
+  #gv-gate {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.88);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999999;
+    backdrop-filter: blur(4px);
+  }
+  #gv-card {
+    width: 92%; max-width: 420px; background:#111; color:#fff;
+    border:1px solid #333; border-radius:16px; padding:22px;
+    box-shadow: 0 12px 32px rgba(0,0,0,.45);
+    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  }
+  #gv-card h3 { margin:0 0 6px; font-weight:700; letter-spacing:.3px }
+  #gv-card p { margin:0 0 14px; color:#c9c9c9; font-size:14px }
+  .gv-input { width:100%; padding:12px 14px; border-radius:12px; border:1px solid #2b2b2b; background:#1a1a1a; color:#fff; margin:8px 0 12px; font:inherit }
+  .gv-btn { width:100%; padding:12px 14px; border:none; border-radius:12px; background:linear-gradient(90deg,#6c5ce7,#7f39fb); color:#fff; font-weight:800; cursor:pointer }
+  .gv-msg { min-height:18px; margin-top:10px; font-size:13px }
+</style>
+
+<!-- Firebase (borra estas dos líneas si ya las cargas en tu página) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-database-compat.js"></script>
+
+<div id="gv-gate" aria-modal="true" role="dialog">
+  <div id="gv-card">
+    <h3>Acceso</h3>
+    <p>Ingresa tu <strong>teléfono</strong> y <strong>PIN</strong> para continuar.</p>
+    <input id="gv-tel" class="gv-input" placeholder="+57 3001234567" maxlength="20" autocomplete="tel">
+    <input id="gv-pin" class="gv-input" placeholder="PIN (4 dígitos)" maxlength="4" inputmode="numeric" pattern="\d{4}" type="password" autocomplete="one-time-code">
+    <button id="gv-btn" class="gv-btn">Entrar</button>
+    <div id="gv-msg" class="gv-msg"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // === Configura tu proyecto Firebase (igual que en tu panel admin) ===
+  const firebaseConfig = {
+    apiKey: "AIzaSyD787GpovTtLAZ9f9REdpcs5xI8lUwSsi0",
+    authDomain: "base-de-datos-sitio-web.firebaseapp.com",
+    projectId: "base-de-datos-sitio-web",
+    databaseURL: "https://base-de-datos-sitio-web-default-rtdb.firebaseio.com",
+    storageBucket: "base-de-datos-sitio-web.firebasestorage.app",
+    messagingSenderId: "214802900584",
+    appId: "1:214802900584:web:5ac9696b5e0c3d6cd53ddd"
+  };
+
+  // Evita re-inicializar si ya existe
+  if (!window.firebase?.apps?.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const rtdb = firebase.database();
+
+  // Helpers
+  const $ = (id)=>document.getElementById(id);
+  const msg = (t, ok=false)=>{ const el=$('gv-msg'); el.style.color = ok ? '#2ecc71' : '#ff6b6b'; el.textContent = t || ''; };
+  const normTel = (n)=>{
+    n = (n||'').toString().trim();
+    const keepPlus = n.startsWith('+');
+    const d = n.replace(/[^0-9]/g,'');
+    return keepPlus ? ('+'+d) : d;
+  };
+  async function sha256(str){
+    if (window.crypto?.subtle) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+    // Polyfill súper básico (si abres por file:// en navegadores antiguos, añade tu propio polyfill robusto)
+    throw new Error('SHA-256 no disponible; abre bajo https o agrega polyfill.');
+  }
+
+  async function doLogin(){
+    msg('');
+    const tel = normTel($('gv-tel').value);
+    const pin = ($('gv-pin').value||'').trim();
+
+    if(!tel){ msg('Ingresa un teléfono válido'); return; }
+    if(!/^\d{4}$/.test(pin)){ msg('El PIN debe tener 4 dígitos'); return; }
+
+    try{
+      $('gv-btn').disabled = true; $('gv-btn').textContent = 'Verificando...';
+      const ref = rtdb.ref('usuarios/'+encodeURIComponent(tel));
+      const snap = await ref.get();
+      if(!snap.exists()){ msg('Usuario no encontrado'); return; }
+      const u = snap.val() || {};
+
+      if (u.activo !== true){ msg('Usuario inactivo'); return; }
+
+      const pinHashInput = await sha256(pin);
+      const ok = (u.pinHash && u.pinHash === pinHashInput) || (u.pin && u.pin === pin);
+
+      if(!ok){ msg('PIN incorrecto'); return; }
+
+      // ✅ Acceso concedido: quita el overlay y marca flag global
+      window.__APP_AUTH_OK__ = true;
+      msg('Acceso concedido', true);
+      setTimeout(()=>{
+        const overlay = $('gv-gate');
+        overlay?.parentNode?.removeChild(overlay);
+      }, 150);
+    }catch(e){
+      console.error(e);
+      msg('No se pudo verificar. Reintenta.');
+    }finally{
+      $('gv-btn').disabled = false; $('gv-btn').textContent = 'Entrar';
+    }
+  }
+
+  $('gv-btn').addEventListener('click', doLogin);
+  $('gv-pin').addEventListener('keyup', (e)=>{ if(e.key==='Enter') doLogin(); });
+
+  // (Opcional) Bloquea teclado rápido para evitar fuerza bruta
+  let lastTry = 0;
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'Enter' && Date.now()-lastTry < 600) e.preventDefault();
+    lastTry = Date.now();
+  });
+
+})();
+</script>
+<!-- ====== /BLOQUE DE ACCESO ====== -->
 </html>
