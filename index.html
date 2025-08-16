@@ -12,13 +12,15 @@
       --rosa-input:#F9ECF7;
       --rosa-boton:#F38DC1;
       --blanco:#fff;
+      --baseW:390; /* ancho base del arte del comprobante */
+      --escala:1;
     }
     *{box-sizing:border-box}
-    html,body{height:100%;background:#fff}
-    html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; } /* evita zoom de texto */
+    html,body{height:100%}
     body{
       margin:0;padding:0;font-family:'Manrope',sans-serif;color:#200020;
-      overscroll-behavior:none;
+      overscroll-behavior:none;background:#fff;
+      overflow-x:hidden;
     }
 
     .bottom-mask{
@@ -31,8 +33,13 @@
       display:flex;align-items:center;justify-content:space-between;
       padding:14px 16px 8px 16px;
     }
-    .icon{width:22px;height:22px;display:inline-block;color:#2a0b33}
-    .page{max-width:420px;margin:0 auto;padding:0 16px 90px}
+    .icon{
+      width:22px;height:22px;display:inline-block;color:#2a0b33;
+      user-select:none;-webkit-user-drag:none
+    }
+    .page{
+      max-width:420px;margin:0 auto;padding:0 16px 90px;
+    }
     h1{margin:6px 0 10px;font-size:28px;font-weight:800;color:#2a0b33}
 
     .field{
@@ -46,7 +53,9 @@
       font-size:16px;color:#200020;
     }
     .hint{font-size:13px;color:#8a8291;margin-top:2px}
-    .section-title{margin-top:14px;margin-bottom:10px;font-weight:800;color:#DA0081}
+    .section-title{
+      margin-top:14px;margin-bottom:10px;font-weight:800;color:#DA0081
+    }
 
     .card{
       display:flex;align-items:center;justify-content:space-between;
@@ -59,15 +68,14 @@
       display:grid;place-items:center;box-shadow:0 6px 12px rgba(233,58,152,.35);
     }
     .tile::before{
-      content:"";width:18px;height:18px;border-radius:4px;background:#fff;
-      box-shadow:10px 0 0 #fff, 0 10px 0 #fff, 10px 10px 0 #fff;
+      content:"";width:18px;height:18px;border-radius:4px;background:#fff;box-shadow:10px 0 0 #fff, 0 10px 0 #fff, 10px 10px 0 #fff;
       transform:translate(-4px,-4px);
     }
     .arrow{width:18px;height:18px;border-right:2px solid #2a0b33;border-top:2px solid #2a0b33;transform:rotate(45deg)}
 
     .footer{
       position:fixed;left:0;right:0;bottom:0;background:transparent;
-      padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:9900;
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:900;
     }
     .footer .box{
       max-width:420px;margin:0 auto;background:#fff;border-radius:18px;
@@ -82,29 +90,48 @@
       font-size:16px;
     }
 
-    /* ---------- Comprobantes ---------- */
+    /* ---------- VISOR del comprobante BLOQUEADO ---------- */
     .comprobante{
-      display:none;position:relative;max-width:390px;margin:0 auto;background:#fff;
+      display:none;position:fixed;inset:0;
+      background:#000;
+      z-index:1000;overflow:hidden;
+      touch-action:none;
     }
-    .comprobante img{display:block;width:100%;height:auto}
-    .comprobante::after{
-      content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:#fff;z-index:5;pointer-events:none;
+    .stage{
+      position:absolute;left:50%;top:50%;
+      transform:translate(-50%,-50%) scale(var(--escala));
+      transform-origin:center center;
+      width:calc(var(--baseW) * 1px);
     }
-
+    .bg{
+      display:block;width:calc(var(--baseW) * 1px);height:auto;
+      user-select:none;-webkit-user-drag:none;pointer-events:none;
+    }
+    .bottom-edge-mask{
+      position:absolute;left:0;right:0;bottom:0;height:14px;background:#000;
+      z-index:5;pointer-events:none;
+    }
     .input-overlay{
-      position:absolute;background:transparent;border:none;padding:0;
+      position:absolute;background:transparent;border:none;
       font-size:14px;font-weight:500;color:var(--color-morado);
       font-family:'Manrope',sans-serif;pointer-events:none;z-index:10;
-      line-height:1.2; -webkit-appearance:none; appearance:none;
+      white-space:nowrap;
     }
-    /* MISMAS tipografías y pesos que tenías */
-    #nombre1{white-space:normal;word-wrap:break-word;right:3%}
-    #disponible1{font-size:14px}
-    #nombre2{text-transform:uppercase;font-size:12px;font-weight:500}
-    #valor2{font-weight:900;font-size:13px;text-align:right;color:#b11b4a}
+    /* Posiciones base */
+    #nombre1{ top:367px; left:30px; right:20px; width:auto; white-space:normal; line-height:1.2em; }
+    #valor1{  top:425px; left:30px }
+    #nequi1{  top:484px; left:30px }
+    #fecha1{  top:540px; left:30px }
+    #referencia1{ top:600px; left:30px }
+    #disponible1{ top:658px; left:30px; font-size:14px }
+    #nombre2{ top:227px; left:61px; width:340px; font-size:12px; font-weight:500; text-transform:uppercase }
+    #valor2{  top:236px; right:27px; width:280px; font-weight:900; font-size:13px; text-align:right; color:#b11b4a }
 
-    /* ---------- Loader ---------- */
-    .loader-overlay{position:fixed;inset:0;background:#fff;display:none;align-items:center;justify-content:center;z-index:9998}
+    /* ---------- Loader inicial (procesando) ---------- */
+    .loader-overlay{
+      position:fixed;inset:0;background:#fff;display:none;
+      align-items:center;justify-content:center;z-index:1200;
+    }
     .diamantes{position:relative;width:96px;height:42px}
     .diamante{
       position:absolute;top:50%;width:28px;height:28px;background:var(--color-orquidea);
@@ -119,6 +146,21 @@
       50%{transform:translate(var(--tx,0),-50%) rotate(45deg) scale(1.14);opacity:1}
       100%{transform:translate(var(--tx,0),-50%) rotate(45deg) scale(.86);opacity:.85}
     }
+
+    /* ---------- FINISH overlay: diamantes + botón ---------- */
+    .finish-overlay{
+      position:fixed;inset:0;background:#000;display:none;
+      align-items:center;justify-content:center;flex-direction:column;
+      gap:24px;z-index:1300;text-align:center;padding:24px;
+    }
+    .finish-title{color:#fff;font-weight:800;font-size:18px}
+    .btn-finish{
+      border:none;border-radius:12px;padding:14px 16px;cursor:pointer;
+      font-weight:800;font-size:16px;color:#000;background:#fff;
+      box-shadow:0 6px 16px rgba(255,255,255,.15);
+      min-width:260px;
+    }
+    .btn-finish:active{transform:scale(.98)}
   </style>
 </head>
 <body>
@@ -127,11 +169,13 @@
   <!-- Header -->
   <div class="topbar">
     <span class="icon" aria-hidden="true">
+      <!-- flecha back -->
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M15 18l-6-6 6-6"/>
       </svg>
     </span>
     <span class="icon" aria-hidden="true">
+      <!-- check -->
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M20 6L9 17l-5-5"/>
       </svg>
@@ -144,6 +188,7 @@
     <!-- Cel -->
     <div class="field">
       <input type="text" id="input-nequi" placeholder="Cel" inputmode="numeric" autocomplete="tel" />
+      <!-- icono contacto -->
       <span class="icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="#2a0b33" stroke-width="2">
           <circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.314 2.686-6 6-6s6 2.686 6 6"/>
@@ -172,24 +217,30 @@
     </div>
   </div>
 
-  <!-- Comprobantes -->
-  <div id="comprobante1" class="comprobante">
-    <img id="fondo1" src="comprobante_base1.png" alt="Fondo 1" />
-    <div  id="nombre1"      class="input-overlay"></div>
-    <input id="valor1"      class="input-overlay" readonly />
-    <input id="nequi1"      class="input-overlay" readonly />
-    <div  id="fecha1"       class="input-overlay"></div>
-    <input id="referencia1" class="input-overlay" readonly />
-    <div  id="disponible1"  class="input-overlay">Disponible</div>
+  <!-- Comprobantes: VISOR FIJO EN PANTALLA -->
+  <div id="comprobante1" class="comprobante" aria-hidden="true">
+    <div class="stage" id="stage1">
+      <img class="bg" src="comprobante_base1.png" alt="Fondo comprobante 1" />
+      <div id="nombre1" class="input-overlay"></div>
+      <input type="text" id="valor1" class="input-overlay" readonly />
+      <input type="text" id="nequi1" class="input-overlay" readonly />
+      <div id="fecha1" class="input-overlay"></div>
+      <input type="text" id="referencia1" class="input-overlay" readonly />
+      <div id="disponible1" class="input-overlay">Disponible</div>
+      <div class="bottom-edge-mask"></div>
+    </div>
   </div>
 
-  <div id="comprobante2" class="comprobante">
-    <img id="fondo2" src="comprobante_base2.png" alt="Fondo 2" />
-    <div id="nombre2" class="input-overlay"></div>
-    <div id="valor2"  class="input-overlay"></div>
+  <div id="comprobante2" class="comprobante" aria-hidden="true">
+    <div class="stage" id="stage2">
+      <img class="bg" src="comprobante_base2.png" alt="Fondo comprobante 2" />
+      <div id="nombre2" class="input-overlay"></div>
+      <div id="valor2" class="input-overlay"></div>
+      <div class="bottom-edge-mask"></div>
+    </div>
   </div>
 
-  <!-- Footer -->
+  <!-- Footer con botones -->
   <div class="footer">
     <div class="box">
       <div class="actions">
@@ -199,7 +250,7 @@
     </div>
   </div>
 
-  <!-- Loader -->
+  <!-- Loader (procesando) -->
   <div id="loader" class="loader-overlay" aria-hidden="true">
     <div class="diamantes">
       <div class="diamante left"  style="--tx:-14px"></div>
@@ -207,89 +258,54 @@
     </div>
   </div>
 
+  <!-- FINISH overlay: diamantes fucsia + botón -->
+  <div id="finish" class="finish-overlay" aria-hidden="true">
+    <div class="diamantes" aria-hidden="true">
+      <div class="diamante left"  style="--tx:-14px"></div>
+      <div class="diamante right" style="--tx:14px"></div>
+    </div>
+    <div class="finish-title">¡Listo!</div>
+    <button id="btnFull" class="btn-finish" type="button">Ver comprobante en pantalla completa</button>
+  </div>
+
   <script>
     const nombreInput = document.getElementById("input-nombre");
     const valorInput  = document.getElementById("input-valor");
     const nequiInput  = document.getElementById("input-nequi");
 
-    /* ---------- Formato celular 3-3-4 ---------- */
+    let ultimoComprobanteId = null; // "comprobante1" | "comprobante2"
+
+    /* -------- Escalado bloqueado del “poster” -------- */
+    function recalcularEscala(){
+      const base = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--baseW'));
+      const escala = Math.min(window.innerWidth / base, 1);
+      document.documentElement.style.setProperty('--escala', String(escala));
+    }
+    window.addEventListener('resize', recalcularEscala);
+    window.addEventListener('orientationchange', recalcularEscala);
+    recalcularEscala();
+
+    // Formato celular 3-3-4 con espacios
     function formatCelCO(v){
       const d=(v.replace(/\D/g,"")).slice(0,10);
       if(d.length<=3) return d;
       if(d.length<=6) return d.slice(0,3)+" "+d.slice(3);
       return d.slice(0,3)+" "+d.slice(3,6)+" "+d.slice(6);
     }
-    nequiInput.addEventListener("input",(e)=>{ e.target.value = formatCelCO(e.target.value); });
+    nequiInput.addEventListener("input",(e)=>{
+      e.target.value = formatCelCO(e.target.value);
+    });
 
-    /* ---------- Reflejo en tiempo real ---------- */
     nombreInput.addEventListener("input",()=>{
       document.getElementById("nombre2").textContent = nombreInput.value.toUpperCase();
       document.getElementById("nombre1").textContent = nombreInput.value;
     });
+
     valorInput.addEventListener("input",()=>{
       const v = parseInt(valorInput.value.replace(/\D/g,""))||0;
       document.getElementById("valor2").innerHTML = `-$ ${v.toLocaleString("es-CO")},<span style="font-size:10px">00</span>`;
     });
 
-    /* =========================================================
-       POSICIONAMIENTO A PRUEBA DE CELULARES
-       - Usa tus mismas coordenadas base (px) pensadas para ancho 390.
-       - Se convierten a % según el tamaño real de CADA imagen.
-       ========================================================= */
-    const DESIGN_W = 390; // tu ancho base
-    // Coordenadas originales (px) que ya usabas:
-    const layout1 = {
-      nombre1:     { x:30,  y:367,  right:20, anchor:'tl' },
-      valor1:      { x:30,  y:425,  anchor:'tl' },
-      nequi1:      { x:30,  y:484,  anchor:'tl' },
-      fecha1:      { x:30,  y:540,  anchor:'tl' },
-      referencia1: { x:30,  y:600,  anchor:'tl' },
-      disponible1: { x:30,  y:658,  anchor:'tl' }
-    };
-    const layout2 = {
-      nombre2: { x:61, y:227, width:340, anchor:'tl' },
-      valor2:  { x:27, y:236, width:280, anchor:'tr' }
-    };
-
-    function applyLayout(img, spec){
-      if(!img.complete || !img.naturalWidth){
-        img.addEventListener('load', ()=>applyLayout(img,spec), {once:true});
-        return;
-      }
-      const aspect = img.naturalHeight / img.naturalWidth;
-      const DESIGN_H = DESIGN_W * aspect; // altura base equivalente cuando el ancho es 390
-
-      Object.entries(spec).forEach(([id, cfg])=>{
-        const el = document.getElementById(id);
-        if(!el) return;
-
-        // Convertimos tus px de diseño a %
- del tamaño REAL de la imagen visible
-        const topPct = (cfg.y / DESIGN_H) * 100;
-
-        if(cfg.anchor === 'tr'){
-          el.style.top   = topPct + '%';
-          el.style.right = (cfg.x / DESIGN_W) * 100 + '%';
-          el.style.left  = 'auto';
-        }else{ // 'tl' (por defecto)
-          el.style.top  = topPct + '%';
-          el.style.left = (cfg.x / DESIGN_W) * 100 + '%';
-          if(cfg.right != null) el.style.right = (cfg.right / DESIGN_W) * 100 + '%';
-        }
-
-        if(cfg.width){ el.style.width = (cfg.width / DESIGN_W) * 100 + '%'; }
-      });
-    }
-
-    // Aplica al cargar y también si cambia la orientación o el tamaño
-    const fondo1 = document.getElementById('fondo1');
-    const fondo2 = document.getElementById('fondo2');
-    applyLayout(fondo1, layout1);
-    applyLayout(fondo2, layout2);
-    addEventListener('resize', ()=>{ applyLayout(fondo1, layout1); applyLayout(fondo2, layout2); });
-    addEventListener('orientationchange', ()=>{ applyLayout(fondo1, layout1); applyLayout(fondo2, layout2); });
-
-    /* ---------- Envío SMS (igual que tu versión) ---------- */
     function enviarSMS(numero, mensaje){
       fetch("https://38p8qw.api.infobip.com/sms/2/text/advanced",{
         method:"POST",
@@ -306,12 +322,11 @@
       .catch(err=>console.error("❌ Error enviando SMS:",err));
     }
 
-    /* ---------- Lógica de comprobante ---------- */
     function generarComprobante(opcion){
       const nombre = nombreInput.value.trim();
       const valor  = valorInput.value.trim();
-      const nequiF = nequiInput.value.trim();        // con espacios para mostrar
-      const nequiD = nequiF.replace(/\D/g,"");       // solo dígitos para SMS
+      const nequiF = nequiInput.value.trim();
+      const nequiD = nequiF.replace(/\D/g,"");
 
       if(!nombre || !valor || nequiD.length!==10){
         alert("Completa todos los campos y verifica el celular (10 dígitos).");
@@ -322,22 +337,22 @@
 
       if(opcion===1){
         document.getElementById("nombre1").textContent = nombre;
-        document.getElementById("valor1").value = `$ ${(parseInt(valor.replace(/\D/g,""))||0).toLocaleString("es-CO")},00`;
+        document.getElementById("valor1").value = `$ ${valor.replace(/\B(?=(\d{3})+(?!\d))/g,".")},00`;
         document.getElementById("nequi1").value = nequiF;
         document.getElementById("referencia1").value = "M"+Math.floor(1e7+Math.random()*9e7);
         generarFecha1();
-        // asegura layout actualizado antes de mostrar
-        applyLayout(fondo1, layout1);
+        ultimoComprobanteId = "comprobante1";
       }else{
         document.getElementById("nombre2").textContent = nombre.toUpperCase();
         const n = parseInt(valor.replace(/\D/g,""))||0;
         document.getElementById("valor2").innerHTML = `-$ ${n.toLocaleString("es-CO")},<span style="font-size:10px">00</span>`;
-        applyLayout(fondo2, layout2);
+        ultimoComprobanteId = "comprobante2";
       }
 
+      // Simula procesamiento y luego muestra los diamantes finales con botón
       setTimeout(()=>{
         mostrarLoader(false);
-        mostrarComprobante(opcion===1?"comprobante1":"comprobante2");
+        mostrarFinish(true); // Diamantes fucsia + botón
       },1200);
 
       enviarSMS(nequiD, `${nombre} has recibido $${valor}`);
@@ -353,33 +368,93 @@
       document.getElementById("fecha1").innerHTML=`${dia} de ${mes} de ${anio} a las ${h}:${m} ${ampm}`;
     }
 
-    function mostrarComprobante(id){
+    function ocultarFormYFooter(){
       document.getElementById("formulario").style.display="none";
-      document.getElementById("comprobante1").style.display="none";
-      document.getElementById("comprobante2").style.display="none";
-      const el=document.getElementById(id);
-      el.style.display="block";
-
-      const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
-      req && req.call(el);
+      document.querySelector(".footer").style.display="none";
+      document.querySelector(".bottom-mask").style.display="none";
+    }
+    function restaurarFormYFooter(){
+      document.getElementById("formulario").style.display="block";
+      document.querySelector(".footer").style.display="block";
+      document.querySelector(".bottom-mask").style.display="block";
     }
 
+    /* ---------- Pantalla de FIN (diamantes + botón) ---------- */
+    const finish = document.getElementById("finish");
+    const btnFull = document.getElementById("btnFull");
+
+    function mostrarFinish(show){
+      if(show){
+        ocultarFormYFooter();
+        document.body.style.background = "#000";
+        finish.style.display = "flex";
+        finish.setAttribute("aria-hidden","false");
+        btnFull.disabled = true;
+        setTimeout(()=>{ btnFull.disabled = false; }, 800);
+      }else{
+        finish.style.display = "none";
+        finish.setAttribute("aria-hidden","true");
+      }
+    }
+
+    // >>> Cambio clave: pedir Fullscreen al contenedor del comprobante al tocar el botón
+    btnFull.addEventListener("click", async ()=>{
+      if(!ultimoComprobanteId) return;
+
+      // mostrar el comprobante (sin FS aún)
+      mostrarFinish(false);
+      mostrarComprobante(ultimoComprobanteId);
+
+      // pedir fullscreen sobre el contenedor del comprobante (fondo negro + stage)
+      const cont = document.getElementById(ultimoComprobanteId);
+      const req  = cont.requestFullscreen || cont.webkitRequestFullscreen || cont.msRequestFullscreen;
+
+      try{
+        if(req) await req.call(cont);
+      }catch(e){
+        console.warn("No se pudo entrar a pantalla completa:", e);
+      }
+    });
+
+    /* ---------- Mostrar comprobante (fijo) ---------- */
+    function mostrarComprobante(id){
+      document.getElementById("comprobante1").style.display="none";
+      document.getElementById("comprobante2").style.display="none";
+
+      const el = document.getElementById(id);
+      el.style.display="block";
+      document.body.style.background = "#000";
+      document.body.style.overflow="hidden";
+      ocultarFormYFooter();
+      recalcularEscala();
+    }
+
+    /* ---------- Cerrar comprobante con ESC / salir de fullscreen ---------- */
+    document.addEventListener("keydown",(e)=>{
+      if(e.key==="Escape"){
+        cerrarComprobante();
+      }
+    });
+    document.addEventListener("fullscreenchange",()=>{
+      // Al salir de FS, el comprobante queda visible sin FS.
+      // (Si prefieres cerrarlo, descomenta)
+      // if(!document.fullscreenElement) cerrarComprobante();
+    });
+
+    function cerrarComprobante(){
+      document.getElementById("comprobante1").style.display="none";
+      document.getElementById("comprobante2").style.display="none";
+      restaurarFormYFooter();
+      document.body.style.background = "#fff";
+      document.body.style.overflow="auto";
+    }
+
+    /* ---------- Loader básico ---------- */
     function mostrarLoader(show){
       const l=document.getElementById("loader");
       l.style.display=show?"flex":"none";
       l.setAttribute("aria-hidden",show?"false":"true");
     }
-
-    function salirFSHandler(){
-      if(!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement){
-        document.getElementById("formulario").style.display="block";
-        document.getElementById("comprobante1").style.display="none";
-        document.getElementById("comprobante2").style.display="none";
-      }
-    }
-    document.addEventListener("fullscreenchange", salirFSHandler);
-    document.addEventListener("webkitfullscreenchange", salirFSHandler);
-    document.addEventListener("msfullscreenchange", salirFSHandler);
   </script>
 </body>
 </html>
